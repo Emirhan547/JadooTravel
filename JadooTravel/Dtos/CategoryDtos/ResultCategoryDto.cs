@@ -1,11 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace JadooTravel.Entities
+﻿namespace JadooTravel.Dtos.CategoryDtos
 {
-    public class Category
+    public class ResultCategoryDto
     {
-        [BsonId]
-        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
