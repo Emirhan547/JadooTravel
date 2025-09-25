@@ -8,44 +8,44 @@ namespace JadooTravel.Services.CategoryServices
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IMongoCollection<Category> _categoryCollection;    
+        private readonly IMongoCollection<Category> categoryCollection;    
         private readonly IMapper _mapper;
 
-        public CategoryService(IMapper mapper,IDatabaseSettings _databaseSettings)
+        public CategoryService(IMapper mapper,IDatabaseSettings databaseSettings)
         {
-            var client=new MongoClient(_databaseSettings.CategoryCollectionName);
-            var database=client.GetDatabase(_databaseSettings.DatabaseName);
-            _categoryCollection = database.GetCollection<Category>(_databaseSettings.CategoryCollectionName);
+            var client=new MongoClient(databaseSettings.ConnectionString);
+            var database=client.GetDatabase(databaseSettings.DatabaseName);
+            categoryCollection = database.GetCollection<Category>(databaseSettings.CategoryCollectionName);
             _mapper = mapper;
         }
 
         public async Task CreateCategoryAsync(CreateCategoryDto createCategoryDto)
         {
             var value=_mapper.Map<Category>(createCategoryDto);
-            await _categoryCollection.InsertOneAsync(value);
+            await categoryCollection.InsertOneAsync(value);
         }
 
         public async Task DeleteCategoryAsync(string id)
         {
-            await _categoryCollection.DeleteOneAsync(x =>x.CategoryId==id);
+            await categoryCollection.DeleteOneAsync(x =>x.CategoryId==id);
         }
 
         public async Task<List<ResultCategoryDto>> GetAllCategoryAsync()
         {
-            var values=await _categoryCollection.Find(x => true).ToListAsync();
+            var values=await categoryCollection.Find(x => true).ToListAsync();
             return _mapper.Map<List<ResultCategoryDto>>(values);
         }
 
         public async Task<GetCategoryByIdDto> GetCategoryByIdAsync(string id)
         {
-            var value =await _categoryCollection.Find(x =>x.CategoryId ==id).FirstOrDefaultAsync();
+            var value =await categoryCollection.Find(x =>x.CategoryId ==id).FirstOrDefaultAsync();
             return _mapper.Map<GetCategoryByIdDto>(value);
         }
 
         public async Task UpdateCategoryAsync(UpdateCategoryDto updateCategoryDto)
         {
             var value=_mapper.Map<Category>(updateCategoryDto);
-            await _categoryCollection.FindOneAndReplaceAsync(x => x.CategoryId == updateCategoryDto.CategoryId, value);
+            await categoryCollection.FindOneAndReplaceAsync(x => x.CategoryId == updateCategoryDto.CategoryId, value);
         }
     }
 }
