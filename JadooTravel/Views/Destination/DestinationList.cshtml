@@ -1,9 +1,10 @@
-﻿@model List<JadooTravel.Dtos.DestinationDtos.ResultDestinationDto>
+﻿@model List<ResultDestinationDto>
 @{
-    Layout = null;
+    ViewData["Title"] = "DestinationList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
 }
 
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container">
     <br /> <br />
@@ -21,13 +22,14 @@
 
         @foreach (var item in Model)
         {
+            count++;
             <tr>
-                <td>@item.DestinationId</td>
+                <td>@count.</td>
                 <td>@item.CityCountry</td>
                 <td>@item.Price</td>
                 <td>@item.Capacity</td>
-                <td><a href="/Destination/DeleteDestination/@item.DestinationId" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Destination/UpdateDestination/@item.DestinationId" class="btn btn-success">Güncelle</a></td>
+                <td><a href="/Destination/DeleteDestination/@item.Id" class="btn btn-danger">Sil</a></td>
+                <td><a href="/Destination/UpdateDestination/@item.Id" class="btn btn-success">Güncelle</a></td>
             </tr>
         }
     </table>
@@ -35,3 +37,4 @@
     <a href="/Destination/CreateDestination/" class="btn btn-info">Yeni Tur Girişi</a>
 
 </div>
+

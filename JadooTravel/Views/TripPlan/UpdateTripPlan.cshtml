@@ -1,0 +1,23 @@
+﻿@model UpdateTripPlanDto
+@{
+    ViewData["Title"] = "UpdateTripPlan";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container">
+    <br /> <br />
+    <form method="post">
+        <input type="hidden"asp-for="Id"/>
+        <label>Başlık Giriniz</label>
+        <input type="text" asp-for="Title" class="form-control" />
+        <br />
+        <label>Açıklama Giriniz</label>
+        <input type="text" asp-for="Description" class="form-control" />
+        <br />
+        <label>İkon Url Giriniz</label>
+        <input type="text" asp-for="IconUrl" class="form-control" />
+        <br />
+        <button class="btn btn-primary">Tur Planı Ekle</button>
+    </form>
+</div>
+

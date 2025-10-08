@@ -1,0 +1,42 @@
+﻿
+@model List<ResultBookingDto>
+@{
+    ViewData["Title"] = "BookingList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+}
+
+<div class="container">
+    <br /> <br />
+
+    <table class="table table-bordered">
+
+        <tr>
+            <th>#</th>
+            <th>İsim Soyisim</th>
+            <th>Email</th>
+            <th>Telefon</th>
+            <th>Mesaj</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td>@count</td>
+                <td>@item.FullName</td>
+                <td>@item.Email</td>
+                <td>@item.Phone</td>
+                <td>@item.MessageBody</td>
+                <td><a href="/Booking/DeleteBooking/@item.Id" class="btn btn-danger">Sil</a></td>
+                <td><a href="/Booking/UpdateBooking/@item.Id" class="btn btn-success">Güncelle</a></td>
+            </tr>
+        }
+
+    </table>
+
+    <a href="/Booking/CreateBooking/" class="btn btn-info">Yeni Yazar Girişi</a>
+
+
+</div>
+

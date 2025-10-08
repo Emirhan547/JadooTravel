@@ -1,4 +1,4 @@
-﻿@model JadooTravel.Dtos.DestinationDtos.UpdateDestinationDto
+﻿@model UpdateDestinationDto
 @{
     Layout = null;
 }
@@ -8,7 +8,7 @@
 <div class="container">
     <br /> <br />
     <form method="post">
-        <input type="hidden"asp-for="DestinationId"/>
+        <input type="hidden"asp-for="Id"/>
         <input type="text" asp-for="CityCountry" placeholder="Şehir ve Ülke Giriniz" class="form-control" />
         <br />
         <input type="text" asp-for="ImageUrl" placeholder="Fotoğraf Yolu Giriniz" class="form-control" />

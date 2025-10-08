@@ -1,20 +1,34 @@
-using JadooTravel.Services.CategoryServices;
-using JadooTravel.Services.DestinationServices;
-using JadooTravel.Settings;
+using JadooTravel.DataAccess.Context;
+
+using JadooTravel.UI.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System.Reflection;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IDestinationService, DestinationService>();
+
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettingsKey"));
-builder.Services.AddScoped<IDatabaseSettings>(sp =>
+builder.Services.AddServiceExtensions();
+
+var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbConnection");
+var mongoDatabaseName = builder.Configuration.GetValue<string>("MongoDbSettings:DatabaseName");
+
+if (string.IsNullOrEmpty(mongoConnectionString))
+    throw new ArgumentNullException("MongoDbConnection boþ!");
+
+if (string.IsNullOrEmpty(mongoDatabaseName))
+    throw new ArgumentNullException("MongoDbSettings:DatabaseName boþ!");
+
+var mongoClient = new MongoClient(mongoConnectionString);
+var mongoDatabase = mongoClient.GetDatabase(mongoDatabaseName);
+builder.Services.AddDbContext<JadooContext>(options =>
 {
-    return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
+    options.UseMongoDB(mongoClient, mongoDatabaseName);
 });
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

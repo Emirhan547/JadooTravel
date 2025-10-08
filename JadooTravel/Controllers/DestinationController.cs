@@ -1,8 +1,11 @@
-﻿using JadooTravel.Dtos.CategoryDtos;
-using JadooTravel.Dtos.DestinationDtos;
-using JadooTravel.Services.CategoryServices;
-using JadooTravel.Services.DestinationServices;
+﻿
+
+using AutoMapper;
+using JadooTravel.Business.Abstract;
+using JadooTravel.Dto.Dtos.DestinationDtos;
+using JadooTravel.Entity.Entities;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Threading.Tasks;
 
 namespace JadooTravel.Controllers
@@ -10,15 +13,19 @@ namespace JadooTravel.Controllers
     public class DestinationController : Controller
     {
         private readonly IDestinationService _destinationService;
+        private readonly IMapper _mapper;
 
-        public DestinationController(IDestinationService destinationService)
+        public DestinationController(IDestinationService destinationService, IMapper mapper)
         {
             _destinationService = destinationService;
+            _mapper = mapper;
         }
-        public async Task<ActionResult> DestinationList()
+
+        public async Task<IActionResult> DestinationList()
         {
-            var values =await _destinationService.GetAllDestinationAsync();
-            return View(values);
+            var values = await _destinationService.TGetAllListAsync();
+            var valueList = _mapper.Map<List<ResultDestinationDto>>(values);
+            return View(valueList);
         }
         [HttpGet]
         public IActionResult CreateDestination()
@@ -26,26 +33,30 @@ namespace JadooTravel.Controllers
             return View();
         }
         [HttpPost]
-        public async Task <IActionResult>CreateDestination(CreateDestinationDto createDestinationDto)
+        public async Task<IActionResult> CreateDestination(CreateDestinationDto createDestinationDto)
         {
-            await _destinationService.CreateDestinationAsync(createDestinationDto);
+            var values = _mapper.Map<Destination>(createDestinationDto);
+            await _destinationService.TCreateAsync(values);
             return RedirectToAction("DestinationList");
         }
-        public async Task <IActionResult> DeleteDestination(string id)
+
+        public async Task<IActionResult> DeleteDestination(ObjectId id)
         {
-            await _destinationService.DeleteDestinationAsync(id);
+            await _destinationService.TDeleteAsync(id);
             return RedirectToAction("DestinationList");
         }
         [HttpGet]
-        public async Task<IActionResult>UpdateDestination(string id)
+        public async Task<IActionResult> UpdateDestination(ObjectId id)
         {
-            var values=await _destinationService.GetDestinationByIdAsync(id);
-            return View(values);   
+            var value = await _destinationService.TGetByIdAsync(id);
+            var updateDestination = _mapper.Map<UpdateDestinationDto>(value);
+            return View(updateDestination);
         }
         [HttpPost]
-        public async Task <IActionResult>UpdateDestination(UpdateDestinationDto updateDestinationDto)
+        public async Task<IActionResult> UpdateDestination(UpdateDestinationDto updateDestinationDto)
         {
-            await _destinationService.UpdateDestinationAsync(updateDestinationDto);
+            var values = _mapper.Map<Destination>(updateDestinationDto);
+            await _destinationService.TUpdateAsync(values);
             return RedirectToAction("DestinationList");
         }
     }

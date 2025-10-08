@@ -1,4 +1,4 @@
-﻿@model JadooTravel.Dtos.CategoryDtos.GetCategoryByIdDto
+﻿@model GetCategoryByIdDto
 @{
     Layout = null;
 }
@@ -8,8 +8,20 @@
 <div class="container">
     <br /> <br />
     <form method="post">
-        <input type="hidden"asp-for=CategoryId/>
-        <input type="text" asp-for="CategoryName" placeholder="Kategori Adını Giriniz" class="form-control" />
+        <label>Kategori Adını Giriniz</label>
+        <input type="text" asp-for="CategoryName" class="form-control" />
+        <br />
+        <label>Açıklama Giriniz</label>
+        <input type="text" asp-for="Description" placeholder="Açıklama Giriniz" class="form-control" />
+        <br />
+        <label>İkon Giriniz</label>
+        <input type="text" asp-for="IconUrl" placeholder="İkon Giriniz" class="form-control" />
+        <br />
+        <label>Kategori Durumu Seçiniz</label>
+        <select asp-for="Status" class="form-control">
+            <option>Seçiminizi Yapın</option>
+            <option value="true">Var</option>
+        </select>
         <br />
         <button class="btn btn-primary">Kategori Güncelle</button>
     </form>

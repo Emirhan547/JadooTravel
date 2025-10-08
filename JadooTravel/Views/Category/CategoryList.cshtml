@@ -1,9 +1,10 @@
-﻿@model List<JadooTravel.Dtos.CategoryDtos.ResultCategoryDto>
+﻿@model List<ResultCategoryDto>
 @{
-    Layout = null;
+    ViewData["Title"] = "CategoryList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
 }
 
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container">
     <br /> <br />
@@ -15,15 +16,20 @@
             <th>Kategori Adı</th>
             <th>Sil</th>
             <th>Güncelle</th>
+            <th>Durum</th>
         </tr>
 
         @foreach (var item in Model)
         {
+            count++;
             <tr>
-                <td>@item.CategoryId</td>
+                <td>@count</td>
                 <td>@item.CategoryName</td>
-                <td><a href="/Category/DeleteCategory/@item.CategoryId" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Category/UpdateCategory/@item.CategoryId" class="btn btn-success">Güncelle</a></td>
+                <td>@item.Description</td>
+                <td>@item.IconUrl</td>
+                <td>@(item.Status ? "Var" : "Yok")</td>
+                <td><a href="/Category/DeleteCategory/@item.Id" class="btn btn-danger">Sil</a></td>
+                <td><a href="/Category/UpdateCategory/@item.Id" class="btn btn-success">Güncelle</a></td>
             </tr>
         }
 
@@ -33,3 +39,4 @@
 
 
 </div>
+
