@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.BookingDtos;
-using JadooTravel.Dto.Dtos.CategoryDtos;
 using JadooTravel.Entity.Entities;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -25,17 +24,20 @@ namespace JadooTravel.UI.Controllers
             var valueList = _mapper.Map<List<ResultBookingDto>>(values);
             return View(valueList);
         }
+
         [HttpGet]
         public IActionResult CreateBooking()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking(CreateBookingDto createBookingDto)
         {
             var values = _mapper.Map<Booking>(createBookingDto);
             await _bookingService.TCreateAsync(values);
-            return RedirectToAction("BookingList");
+            TempData["Success"] = "Rezervasyonunuz başarıyla alındı!";
+            return RedirectToAction("CategoryList", "Category");
         }
 
         public async Task<IActionResult> DeleteBooking(ObjectId id)
@@ -43,6 +45,7 @@ namespace JadooTravel.UI.Controllers
             await _bookingService.TDeleteAsync(id);
             return RedirectToAction("BookingList");
         }
+
         [HttpGet]
         public async Task<IActionResult> UpdateBooking(ObjectId id)
         {
@@ -50,8 +53,9 @@ namespace JadooTravel.UI.Controllers
             var updateBooking = _mapper.Map<UpdateBookingDto>(value);
             return View(updateBooking);
         }
+
         [HttpPost]
-        public async Task<IActionResult> UpdateCategory(UpdateBookingDto updateBookingDto)
+        public async Task<IActionResult> UpdateBooking(UpdateBookingDto updateBookingDto)
         {
             var values = _mapper.Map<Booking>(updateBookingDto);
             await _bookingService.TUpdateAsync(values);

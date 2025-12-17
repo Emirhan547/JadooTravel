@@ -1,0 +1,206 @@
+﻿@using JadooTravel.Dto.Dtos.DashboardDtos
+@model DashboardStatisticsDto
+@{
+    ViewData["Title"] = "AdminDashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Admin Dashboard</h2>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Kategori</h5>
+                    <h2 class="mb-0">@Model.TotalCategories</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Destinasyon</h5>
+                    <h2 class="mb-0">@Model.TotalDestinations</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Rezervasyon</h5>
+                    <h2 class="mb-0">@Model.TotalBookings</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Toplam Yorum</h5>
+                    <h2 class="mb-0">@Model.TotalTestimonials</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Destination Capacity Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Destinasyon Kapasiteleri</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="capacityChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destination Price Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Destinasyon Fiyatları</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="priceChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Destinations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Son Eklenen 5 Tur</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var item in Model.LatestDestinations.Take(5))
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.CityCountry" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.CityCountry</h5>
+                                        <p class="card-text">
+                                            <strong>Fiyat:</strong> @item.Price ₺<br />
+                                            <strong>Kapasite:</strong> @item.Capacity kişi<br />
+                                            <strong>Süre:</strong> @item.DayNight
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last 4 Destinations for "Upcoming Schedules" Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Son Eklenen 4 Tur (Top Paying Client Altı)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Görsel</th>
+                                    <th>Şehir/Ülke</th>
+                                    <th>Fiyat</th>
+                                    <th>Kapasite</th>
+                                    <th>Süre</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.LatestDestinations.Take(4))
+                                {
+                                    <tr>
+                                        <td><img src="@item.ImageUrl" alt="@item.CityCountry" style="width: 80px; height: 60px; object-fit: cover;"></td>
+                                        <td>@item.CityCountry</td>
+                                        <td>@item.Price ₺</td>
+                                        <td>@item.Capacity kişi</td>
+                                        <td>@item.DayNight</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Capacity Chart
+        var capacityCtx = document.getElementById('capacityChart').getContext('2d');
+        var capacityData = @Html.Raw(Json.Serialize(Model.DestinationCapacities.Select(d => new { label = d.CityCountry, value = d.Capacity })));
+
+        new Chart(capacityCtx, {
+            type: 'bar',
+            data: {
+                labels: capacityData.map(d => d.label),
+                datasets: [{
+                    label: 'Kapasite',
+                    data: capacityData.map(d => d.value),
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Price Chart
+        var priceCtx = document.getElementById('priceChart').getContext('2d');
+        var priceData = @Html.Raw(Json.Serialize(Model.DestinationCapacities.Select(d => new { label = d.CityCountry, value = d.Price })));
+
+        new Chart(priceCtx, {
+            type: 'line',
+            data: {
+                labels: priceData.map(d => d.label),
+                datasets: [{
+                    label: 'Fiyat (₺)',
+                    data: priceData.map(d => d.value),
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}

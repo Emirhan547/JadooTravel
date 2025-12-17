@@ -34,6 +34,8 @@ namespace JadooTravel.UI.Extensions
             services.AddScoped(typeof(IGenericService<>), typeof(GenericManager<>));
 
 
+
+
         }
     }
 }

@@ -1,25 +1,104 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light fixed-top py-5 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.Name;
+    var currentPath = Context.Request.Path;
+}
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
     <div class="container">
-        <a class="navbar-brand" href="index.html"><img src="/public/assets/img/logo.svg" height="34" alt="logo" /></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
+        <a class="navbar-brand d-flex align-items-center fw-bold fs-2" href="/Default/Index">
+            <img src="/public/assets/img/logo.svg" width="40" alt="logo" />
+            <span class="ms-2">Jadoo</span>
+        </a>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base align-items-lg-center align-items-start">
-                <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#service">Hizmetlerimiz</a></li>
-                <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#destination">Lokasyonlar</a></li>
-                <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#booking">Rezervasyon</a></li>
-                <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#testimonial">Bize Yazın</a></li>
-                <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#!">Giriş Yap</a></li>
-                <li class="nav-item px-3 px-xl-4"><a class="btn btn-outline-dark order-1 order-lg-0 fw-medium" href="#!">Kayıt Ol</a></li>
-                <li class="nav-item dropdown px-3 px-lg-0">
-                    <a class="d-inline-block ps-0 py-2 pe-3 text-decoration-none dropdown-toggle fw-medium" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">EN</a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="border-radius:0.3rem;" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">EN</a></li>
-                        <li><a class="dropdown-item" href="#!">TR</a></li>
-                        <li><a class="dropdown-item" href="#!">ESP</a></li>
-                        <li><a class="dropdown-item" href="#!">FR</a></li>
-                    </ul>
+            <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link fw-medium active" aria-current="page" href="/Default/Index">
+                        @Localizer["Home"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#service">
+                        @Localizer["Categories"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#destination">
+                        @Localizer["Destinations"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#booking">
+                        @Localizer["Bookings"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#testimonial">
+                        @Localizer["Testimonials"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#ai-recommendations">
+                        <i class="fas fa-robot me-1"></i> AI Rehber
+                    </a>
                 </li>
             </ul>
+
+            <div class="d-flex align-items-center gap-2 ms-lg-3">
+                <!-- Language Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe"></i>
+                        @{
+                            var langText = currentCulture switch
+                            {
+                                "tr-TR" => "TR 🇹🇷",
+                                "en-US" => "EN 🇺🇸",
+                                "de-DE" => "DE 🇩🇪",
+                                "fr-FR" => "FR 🇫🇷",
+                                _ => "TR 🇹🇷"
+                            };
+                        }
+                        @langText
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                        <li>
+                            <a class="dropdown-item @(currentCulture == "tr-TR" ? "active" : "")"
+                               href="/Language/ChangeLanguage?culture=tr-TR&returnUrl=@currentPath">
+                                🇹🇷 Türkçe
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(currentCulture == "en-US" ? "active" : "")"
+                               href="/Language/ChangeLanguage?culture=en-US&returnUrl=@currentPath">
+                                🇺🇸 English
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(currentCulture == "de-DE" ? "active" : "")"
+                               href="/Language/ChangeLanguage?culture=de-DE&returnUrl=@currentPath">
+                                🇩🇪 Deutsch
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(currentCulture == "fr-FR" ? "active" : "")"
+                               href="/Language/ChangeLanguage?culture=fr-FR&returnUrl=@currentPath">
+                                🇫🇷 Français
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <a class="btn btn-primary order-0" href="/Admin/AdminDashboard">
+                    Admin
+                </a>
+            </div>
         </div>
     </div>
 </nav>

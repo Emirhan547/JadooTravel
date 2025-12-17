@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.9" />
+    <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JadooTravel.DataAccess\JadooTravel.DataAccess.csproj" />
     <ProjectReference Include="..\JadooTravel.Entity\JadooTravel.Entity.csproj" />
   </ItemGroup>
