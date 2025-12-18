@@ -1,10 +1,7 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using System.Globalization
-@inject IViewLocalizer Localizer
+﻿
 
 @{
-    var currentCulture = CultureInfo.CurrentUICulture.Name;
-    var currentPath = Context.Request.Path;
+
 }
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
@@ -20,27 +17,27 @@
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
                 <li class="nav-item">
                     <a class="nav-link fw-medium active" aria-current="page" href="/Default/Index">
-                        @Localizer["Home"]
+                     
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-medium" href="#service">
-                        @Localizer["Categories"]
+                       
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-medium" href="#destination">
-                        @Localizer["Destinations"]
+                  
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-medium" href="#booking">
-                        @Localizer["Bookings"]
+                       
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-medium" href="#testimonial">
-                        @Localizer["Testimonials"]
+                      
                     </a>
                 </li>
                 <li class="nav-item">
@@ -55,40 +52,31 @@
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-globe"></i>
-                        @{
-                            var langText = currentCulture switch
-                            {
-                                "tr-TR" => "TR 🇹🇷",
-                                "en-US" => "EN 🇺🇸",
-                                "de-DE" => "DE 🇩🇪",
-                                "fr-FR" => "FR 🇫🇷",
-                                _ => "TR 🇹🇷"
-                            };
-                        }
-                        @langText
+                       
+                       
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
                         <li>
-                            <a class="dropdown-item @(currentCulture == "tr-TR" ? "active" : "")"
-                               href="/Language/ChangeLanguage?culture=tr-TR&returnUrl=@currentPath">
+                            <a class="dropdown-item"
+                               href="#">
                                 🇹🇷 Türkçe
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item @(currentCulture == "en-US" ? "active" : "")"
-                               href="/Language/ChangeLanguage?culture=en-US&returnUrl=@currentPath">
+                            <a class="dropdown-item"
+                               href="#">
                                 🇺🇸 English
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item @(currentCulture == "de-DE" ? "active" : "")"
-                               href="/Language/ChangeLanguage?culture=de-DE&returnUrl=@currentPath">
+                            <a class="dropdown-item"
+                               href="#">
                                 🇩🇪 Deutsch
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item @(currentCulture == "fr-FR" ? "active" : "")"
-                               href="/Language/ChangeLanguage?culture=fr-FR&returnUrl=@currentPath">
+                            <a class="dropdown-item"
+                               href="#">
                                 🇫🇷 Français
                             </a>
                         </li>

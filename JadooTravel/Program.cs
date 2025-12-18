@@ -11,7 +11,8 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddAuthorization();
+builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddServiceExtensions();
 
@@ -47,6 +48,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapStaticAssets();
