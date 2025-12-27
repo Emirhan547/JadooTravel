@@ -2,6 +2,7 @@
 using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.BookingDtos;
 using JadooTravel.Entity.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
@@ -30,14 +31,18 @@ namespace JadooTravel.UI.Controllers
         {
             return View();
         }
-
+        [AllowAnonymous]
+        public IActionResult BookingSuccess()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> CreateBooking(CreateBookingDto createBookingDto)
         {
             var values = _mapper.Map<Booking>(createBookingDto);
             await _bookingService.TCreateAsync(values);
             TempData["Success"] = "Rezervasyonunuz başarıyla alındı!";
-            return RedirectToAction("CategoryList", "Category");
+            return RedirectToAction("BookingSuccess");
         }
 
         public async Task<IActionResult> DeleteBooking(ObjectId id)

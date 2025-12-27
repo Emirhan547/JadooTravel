@@ -1,0 +1,16 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    @await Component.InvokeAsync("_DefaultHead")
+<body>
+    <main class="main" id="top">
+        @await Component.InvokeAsync("_DefaultNavbar")
+        @RenderBody()
+    </main>
+
+    @await Component.InvokeAsync("_DefaultScript")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
