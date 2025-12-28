@@ -1,42 +1,71 @@
-﻿
-@model List<ResultBookingDto>
+﻿@model List<ResultBookingDto>
+
 @{
-    ViewData["Title"] = "BookingList";
+    ViewData["Title"] = "Rezervasyonlar";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int count = 0;
 }
 
-<div class="container">
-    <br /> <br />
+<div class="row">
+    <div class="col-12">
 
-    <table class="table table-bordered">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-book mr-1"></i> Rezervasyon Listesi
+                </h3>
+      
+            </div>
 
-        <tr>
-            <th>#</th>
-            <th>İsim Soyisim</th>
-            <th>Email</th>
-            <th>Telefon</th>
-            <th>Mesaj</th>
-        </tr>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:50px">#</th>
+                            <th>İsim Soyisim</th>
+                            <th>Email</th>
+                            <th>Telefon</th>
+                            <th>Mesaj</th>
+                            <th style="width:160px">İşlemler</th>
+                        </tr>
+                    </thead>
 
-        @foreach (var item in Model)
-        {
-            count++;
-            <tr>
-                <td>@count</td>
-                <td>@item.FullName</td>
-                <td>@item.Email</td>
-                <td>@item.Phone</td>
-                <td>@item.MessageBody</td>
-                <td><a href="/Booking/DeleteBooking/@item.Id" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Booking/UpdateBooking/@item.Id" class="btn btn-success">Güncelle</a></td>
-            </tr>
-        }
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.Phone</td>
+                                    <td>@item.MessageBody</td>
+                                    <td>
+                                        <a href="/Admin/Booking/DeleteBooking/@item.Id"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bu rezervasyonu silmek istediğinize emin misiniz?')">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">
+                                    Kayıtlı rezervasyon bulunamadı.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
 
-    </table>
+                </table>
+            </div>
 
-    <a href="/Booking/CreateBooking/" class="btn btn-info">Yeni Yazar Girişi</a>
+        </div>
 
-
+    </div>
 </div>
-

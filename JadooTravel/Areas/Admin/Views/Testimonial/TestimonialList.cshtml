@@ -1,43 +1,87 @@
-﻿
-@model List<ResultTestimonialDto>
+﻿@model List<ResultTestimonialDto>
+
 @{
-    ViewData["Title"] = "TestimonialList";
+    ViewData["Title"] = "Referanslar";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int count = 0;
 }
 
-<div class="container">
-    <br /> <br />
+<div class="row">
+    <div class="col-12">
 
-    <table class="table table-bordered">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-comments mr-1"></i> Testimonial Listesi
+                </h3>
 
-        <tr>
-            <th>#</th>
-            <th>İsim Soyisim </th>
-            <th>Yorum</th>
-            <th>Görsel Linki</th>
-            <th>Başlık</th>
-            <th></th>
-  
-        </tr>
+                <div class="card-tools">
+                    <a href="/Admin/Testimonial/CreateTestimonial" class="btn btn-info btn-sm">
+                        <i class="fa fa-plus"></i> Yeni Testimonial
+                    </a>
+                </div>
+            </div>
 
-        @foreach (var item in Model)
-        {
-            count++;
-            <tr>
-                <td>@count.</td>
-                <td>@item.NameSurname</td>
-                <td>@item.Comment</td>
-                <td>@item.ImageUrl</td>
-                <td>@item.JobTitle</td>
-                <td><a href="/Testimonial/DeleteTestimonial/@item.Id" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Testimonial/UpdateTestimonial/@item.Id" class="btn btn-success">Güncelle</a></td>
-            </tr>
-        }
-    </table>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:50px">#</th>
+                            <th>İsim Soyisim</th>
+                            <th>Yorum</th>
+                            <th>Görsel</th>
+                            <th>Başlık</th>
+                            <th style="width:160px">İşlemler</th>
+                        </tr>
+                    </thead>
 
-    <a href="/Testimonial/CreateTestimonial/" class="btn btn-info">Yeni Testimonial Girişi</a>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.NameSurname</td>
+                                    <td style="max-width:300px">
+                                        @item.Comment
+                                    </td>
+                                    <td>
+                                        <img src="@item.ImageUrl"
+                                             alt="testimonial"
+                                             style="height:50px;width:50px;object-fit:cover;border-radius:50%" />
+                                    </td>
+                                    <td>@item.JobTitle</td>
+                                    <td>
+                                        <a href="/Admin/Testimonial/UpdateTestimonial/@item.Id"
+                                           class="btn btn-success btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
 
+                                        <a href="/Admin/Testimonial/DeleteTestimonial/@item.Id"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">
+                                    Kayıtlı testimonial bulunamadı.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </div>
 </div>
-
-

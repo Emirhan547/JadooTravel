@@ -1,26 +1,72 @@
 ﻿@model CreateTestimonialDto
+
 @{
-    ViewData["Title"] = "CreateTestimonial";
+    ViewData["Title"] = "Yeni Testimonial";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container">
-    <br /> <br />
-    <form method="post">
-        <label>İsim Soyisim Giriniz</label>
-        <input type="text" asp-for="NameSurname" class="form-control" />
-        <br />
-        <label>Yorum Giriniz</label>
-        <input type="text" asp-for="Comment" class="form-control" />
-        <br />
-        <label>Görsel Linki Giriniz</label>
-        <input type="text" asp-for="ImageUrl" class="form-control" />
-        <br />
-        <label>Başlık Giriniz</label>
-        <input type="text" asp-for="JobTitle" class="form-control" />
-        <br />
-        <button class="btn btn-primary">Testimonial Ekle</button>
-    </form>
+<div class="row">
+    <div class="col-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-plus-circle mr-1"></i> Yeni Testimonial Oluştur
+                </h3>
+            </div>
+
+            <form method="post">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>İsim Soyisim</label>
+                                <input asp-for="NameSurname"
+                                       class="form-control"
+                                       placeholder="Ad Soyad" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Başlık / Ünvan</label>
+                                <input asp-for="JobTitle"
+                                       class="form-control"
+                                       placeholder="CEO, Yazılım Mühendisi vb." />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Yorum</label>
+                        <textarea asp-for="Comment"
+                                  rows="3"
+                                  class="form-control"
+                                  placeholder="Müşteri yorumu"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Görsel URL</label>
+                        <input asp-for="ImageUrl"
+                               class="form-control"
+                               placeholder="https://..." />
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-save"></i> Kaydet
+                    </button>
+                    <a href="/Admin/Testimonial/TestimonialList"
+                       class="btn btn-secondary ml-2">
+                        İptal
+                    </a>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
 </div>
-
-

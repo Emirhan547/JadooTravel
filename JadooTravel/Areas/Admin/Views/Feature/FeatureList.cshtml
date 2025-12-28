@@ -1,44 +1,86 @@
-﻿
-@model List<ResultFeatureDto>
+﻿@model List<ResultFeatureDto>
+
 @{
-    ViewData["Title"] = "FeatureList";
+    ViewData["Title"] = "Feature Alanı";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int count = 0;
 }
 
-<div class="container">
-    <br /> <br />
+<div class="row">
+    <div class="col-12">
 
-    <table class="table table-bordered">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-star mr-1"></i> Feature Listesi
+                </h3>
 
-        <tr>
-            <th>#</th>
-            <th>Başlık</th>
-            <th>Alt Başlık</th>
-            <th>Açıklama</th>
-            <th>Video Url</th>
-            <th></th>
-        </tr>
+                <div class="card-tools">
+                    <a href="/Admin/Feature/CreateFeature" class="btn btn-info btn-sm">
+                        <i class="fa fa-plus"></i> Yeni Feature
+                    </a>
+                </div>
+            </div>
 
-        @foreach (var item in Model)
-        {
-            count++;
-            <tr>
-                <td>@count</td>
-                <td>@item.Title</td>
-                <td>@item.MainTitle</td>
-                <td>@item.Description</td>
-                <td>@item.VideoUrl</td>
-                <td><a href="/Feature/DeleteFeature/@item.Id" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Feature/UpdateFeature/@item.Id" class="btn btn-success">Güncelle</a></td>
-            </tr>
-        }
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:50px">#</th>
+                            <th>Başlık</th>
+                            <th>Alt Başlık</th>
+                            <th>Açıklama</th>
+                            <th>Video Url</th>
+                            <th style="width:160px">İşlemler</th>
+                        </tr>
+                    </thead>
 
-    </table>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.Title</td>
+                                    <td>@item.MainTitle</td>
+                                    <td>@item.Description</td>
+                                    <td>
+                                        <a href="@item.VideoUrl" target="_blank"
+                                           class="text-primary">
+                                            Video Link
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="/Admin/Feature/UpdateFeature/@item.Id"
+                                           class="btn btn-success btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
 
-    <a href="/Feature/CreateFeature/" class="btn btn-info">Yeni Feature Girişi</a>
+                                        <a href="/Admin/Feature/DeleteFeature/@item.Id"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bu feature alanını silmek istediğinize emin misiniz?')">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">
+                                    Kayıtlı feature bulunamadı.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
 
+                </table>
+            </div>
 
+        </div>
+
+    </div>
 </div>
-
-

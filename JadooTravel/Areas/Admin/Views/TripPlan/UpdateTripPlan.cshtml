@@ -1,23 +1,58 @@
 ﻿@model UpdateTripPlanDto
+
 @{
-    ViewData["Title"] = "UpdateTripPlan";
+    ViewData["Title"] = "Tur Planı Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container">
-    <br /> <br />
-    <form method="post">
-        <input type="hidden"asp-for="Id"/>
-        <label>Başlık Giriniz</label>
-        <input type="text" asp-for="Title" class="form-control" />
-        <br />
-        <label>Açıklama Giriniz</label>
-        <input type="text" asp-for="Description" class="form-control" />
-        <br />
-        <label>İkon Url Giriniz</label>
-        <input type="text" asp-for="IconUrl" class="form-control" />
-        <br />
-        <button class="btn btn-primary">Tur Planı Ekle</button>
-    </form>
-</div>
+<div class="row">
+    <div class="col-12">
 
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-edit mr-1"></i> Tur Planı Güncelle
+                </h3>
+            </div>
+
+            <form method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label>Başlık</label>
+                        <input asp-for="Title"
+                               class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <textarea asp-for="Description"
+                                  rows="3"
+                                  class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>İkon (FontAwesome)</label>
+                        <input asp-for="IconUrl"
+                               class="form-control" />
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fa fa-refresh"></i> Güncelle
+                    </button>
+                    <a href="/Admin/TripPlan/TripPlanList"
+                       class="btn btn-secondary ml-2">
+                        İptal
+                    </a>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>

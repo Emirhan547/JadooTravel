@@ -1,29 +1,69 @@
 ﻿@model UpdateCategoryDto
+
 @{
-    ViewData["Title"] = "UpdateCategory";
+    ViewData["Title"] = "Kategori Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-12">
 
-<div class="container">
-    <br /> <br />
-    <form method="post">
-        <label>Kategori Adını Giriniz</label>
-        <input type="text" asp-for="CategoryName" class="form-control" />
-        <br />
-        <label>Açıklama Giriniz</label>
-        <input type="text" asp-for="Description" placeholder="Açıklama Giriniz" class="form-control" />
-        <br />
-        <label>İkon Giriniz</label>
-        <input type="text" asp-for="IconUrl" placeholder="İkon Giriniz" class="form-control" />
-        <br />
-        <label>Kategori Durumu Seçiniz</label>
-        <select asp-for="Status" class="form-control">
-            <option>Seçiminizi Yapın</option>
-            <option value="true">Var</option>
-        </select>
-        <br />
-        <button class="btn btn-primary">Kategori Güncelle</button>
-    </form>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-edit mr-1"></i> Kategori Güncelle
+                </h3>
+            </div>
+
+            <form method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label>Kategori Adı</label>
+                        <input asp-for="CategoryName"
+                               class="form-control"
+                               placeholder="Kategori adı giriniz" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>İkon (FontAwesome)</label>
+                        <input asp-for="IconUrl"
+                               class="form-control"
+                               placeholder="örn: fa fa-list" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Kategori açıklaması"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Durum</label>
+                        <select asp-for="Status" class="form-control">
+                            <option value="true">Aktif</option>
+                            <option value="false">Pasif</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fa fa-refresh"></i> Güncelle
+                    </button>
+                    <a href="/Admin/Category/CategoryList"
+                       class="btn btn-secondary ml-2">
+                        İptal
+                    </a>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
 </div>

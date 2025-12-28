@@ -31,10 +31,10 @@ namespace JadooTravel.Business.Concrete
             return _mapper.Map<List<ResultDestinationDto>>(categories);
         }
 
-        public async Task<ResultDestinationDto> GetByIdAsync(ObjectId id)
+        public async Task<UpdateDestinationDto> GetByIdAsync(ObjectId id)
         {
             var destination=await _destinationDal.GetByIdAsync(id);
-            return _mapper.Map<ResultDestinationDto>(destination);
+            return _mapper.Map<UpdateDestinationDto>(destination);
         }
 
         public async Task UpdateAsync(UpdateDestinationDto update)

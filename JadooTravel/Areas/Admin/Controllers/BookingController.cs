@@ -27,6 +27,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             return View(values);
         }
 
-        
+        public async Task<IActionResult>DeleteBooking(ObjectId id)
+        {
+            await _bookingService.DeleteAsync(id);
+            return RedirectToAction("BookingList");
+        }
     }
 }

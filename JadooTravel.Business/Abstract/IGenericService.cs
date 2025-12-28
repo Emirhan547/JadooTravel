@@ -13,6 +13,6 @@ namespace JadooTravel.Business.Abstract
         Task UpdateAsync(TUpdate update);
         Task DeleteAsync(ObjectId id);
         Task<List<TResult>> GetAllAsync();
-        Task<TResult> GetByIdAsync(ObjectId id);
+        Task<TUpdate> GetByIdAsync(ObjectId id);
     }
 }

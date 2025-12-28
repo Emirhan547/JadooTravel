@@ -4,182 +4,41 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-    <title>@ViewData["Title"] - Admin Panel</title>
-    <meta name="description" content="Admin dashboard for Blogy project" />
-    <meta name="author" content="Emirhan Hacıoğlu" />
-
-    <link rel="icon" href="~/pluto-1.0.0/images/fevicon.png" type="image/png" />
-
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/style.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/responsive.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/colors.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/bootstrap-select.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="~/pluto-1.0.0/css/custom.css" />
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-</head>
+    @* HEAD *@
+    @await Component.InvokeAsync("_AdminLayoutHead")
 
 <body class="dashboard dashboard_1">
     <div class="full_container">
         <div class="inner_container">
 
-            <!-- SIDEBAR -->
-            <nav id="sidebar">
-                <div class="sidebar_blog_1">
-                    <div class="sidebar-header">
-                        <div class="logo_section">
-                            <a asp-controller="Dashboard" asp-action="Index">
-                                <img class="logo_icon img-responsive"
-                                     src="~/pluto-1.0.0/images/logo/logo_icon.png" alt="logo" />
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="sidebar_user_info">
-                        <div class="user_profle_side">
-                            <div class="user_img">
-                                <img class="img-responsive rounded-circle"
-                                     src="~/pluto-1.0.0/images/layout_img/user_img.jpg"
-                                     style="height:60px;width:60px;object-fit:cover;" />
-                            </div>
-                            <div class="user_info">
-                                <h6>Admin</h6>
-                                <p><span class="online_animation"></span> Online</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar_blog_2">
-                    <h4>General</h4>
-                    <ul class="list-unstyled components">
-
-                        <li>
-                            <a asp-area="Admin"asp-controller="Admin" asp-action="AdminDashboard">
-                                <i class="fa fa-dashboard yellow_color"></i> <span>Dashboard</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="Admin"asp-controller="Booking" asp-action="BookingList">
-                                <i class="fa fa-book blue1_color"></i> <span>Booking</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="Admin"asp-controller="Category" asp-action="CategoryList">
-                                <i class="fa fa-list red_color"></i> <span>Kategoriler</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-controller="Destination" asp-action="DestinationList">
-                                <i class="fa fa-comments yellow_color"></i> <span>Destination</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="Admin" asp-controller="Feature" asp-action="FeatureList">
-                                <i class="fa fa-info-circle blue1_color"></i> <span>Feature</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="Admin" asp-controller="Testimonial" asp-action="TestimonialList">
-                                <i class="fa fa-user-shield yellow_color"></i> <span>Testimonial</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="Admin" asp-controller="TripPlan" asp-action="TripPlanList">
-                                <i class="fa fa-users blue1_color"></i> <span>TripPlan</span>
-                            </a>
-                        </li>
-
-                      
-
-                    </ul>
-                </div>
-            </nav>
+            @* SIDEBAR *@
+            @await Component.InvokeAsync("_AdminLayoutSidebar")
 
             <!-- CONTENT -->
             <div id="content">
 
-                <!-- TOPBAR -->
-                <div class="topbar">
-                    <nav class="navbar navbar-expand-lg navbar-light">
-                        <div class="full">
-                            <button type="button" id="sidebarCollapse" class="sidebar_toggle">
-                                <i class="fa fa-bars"></i>
-                            </button>
-
-                            <div class="logo_section">
-                                <a asp-controller="Admin" asp-action="AdminDashboard">
-                                    <img class="img-responsive"
-                                         src="~/pluto-1.0.0/images/logo/logo.png"
-                                         alt="logo" />
-                                </a>
-                            </div>
-
-                            <div class="right_topbar">
-                                <ul class="user_profile_dd">
-                                    <li>
-                                        <a class="dropdown-toggle" data-toggle="dropdown">
-                                            <img class="img-responsive rounded-circle"
-                                                 src="~/pluto-1.0.0/images/layout_img/user_img.jpg"
-                                                 style="height:40px;width:40px;object-fit:cover;" />
-                                            <span class="name_user">Admin</span>
-                                        </a>
-                                        <div class="dropdown-menu">
-                                                <a class="dropdown-item">
-                                                    My Profile
-                                                </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
-                        </div>
-                    </nav>
-                </div>
+                @* TOPBAR *@
+                @await Component.InvokeAsync("_AdminLayoutTopbar")
 
                 <!-- BODY -->
                 <div class="midde_cont">
+
                     <div class="container-fluid">
                         @RenderBody()
                     </div>
 
-                    <div class="container-fluid">
-                        <div class="footer">
-                            <p>
-                                © @DateTime.Now.Year Blogy Admin Panel |
-                                Designed by <a href="https://themewagon.com/">ThemeWagon</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                    @* FOOTER *@
+                    @await Component.InvokeAsync("_AdminLayoutFooter")
 
+                </div>
             </div>
 
         </div>
     </div>
 
-    <script src="~/pluto-1.0.0/js/jquery.min.js"></script>
-    <script src="~/pluto-1.0.0/js/popper.min.js"></script>
-    <script src="~/pluto-1.0.0/js/bootstrap.min.js"></script>
-    <script src="~/pluto-1.0.0/js/perfect-scrollbar.min.js"></script>
-    <script>
-        new PerfectScrollbar('#sidebar');
-    </script>
-    <script src="~/pluto-1.0.0/js/custom.js"></script>
+    @* SCRIPTS *@
+    @await Component.InvokeAsync("_AdminLayoutScript")
 
     @RenderSection("Scripts", required: false)
 </body>

@@ -1,42 +1,93 @@
 ﻿@model List<ResultCategoryDto>
+
 @{
-    ViewData["Title"] = "CategoryList";
+    ViewData["Title"] = "Kategoriler";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int count = 0;
 }
 
+<div class="row">
+    <div class="col-12">
 
-<div class="container">
-    <br /> <br />
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-list mr-1"></i> Kategori Listesi
+                </h3>
 
-    <table class="table table-bordered">
+                <div class="card-tools">
+                    <a href="/Admin/Category/CreateCategory" class="btn btn-info btn-sm">
+                        <i class="fa fa-plus"></i> Yeni Kategori
+                    </a>
+                </div>
+            </div>
 
-        <tr>
-            <th>#</th>
-            <th>Kategori Adı</th>
-            <th>Sil</th>
-            <th>Güncelle</th>
-            <th>Durum</th>
-        </tr>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:50px">#</th>
+                            <th>Kategori Adı</th>
+                            <th>Açıklama</th>
+                            <th>İkon</th>
+                            <th style="width:90px">Durum</th>
+                            <th style="width:160px">İşlemler</th>
+                        </tr>
+                    </thead>
 
-        @foreach (var item in Model)
-        {
-            count++;
-            <tr>
-                <td>@count</td>
-                <td>@item.CategoryName</td>
-                <td>@item.Description</td>
-                <td>@item.IconUrl</td>
-                <td>@(item.Status ? "Var" : "Yok")</td>
-                <td><a href="/Category/DeleteCategory/@item.Id" class="btn btn-danger">Sil</a></td>
-                <td><a href="/Category/UpdateCategory/@item.Id" class="btn btn-success">Güncelle</a></td>
-            </tr>
-        }
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.CategoryName</td>
+                                    <td>@item.Description</td>
+                                    <td>
+                                        <i class="@item.IconUrl"></i>
+                                        <small class="text-muted ml-1">@item.IconUrl</small>
+                                    </td>
+                                    <td>
+                                        @if (item.Status)
+                                        {
+                                            <span class="badge badge-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary">Pasif</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="/Admin/Category/UpdateCategory/@item.Id"
+                                           class="btn btn-success btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
 
-    </table>
+                                        <a href="/Admin/Category/DeleteCategory/@item.Id"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?')">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">
+                                    Kayıtlı kategori bulunamadı.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
 
-    <a href="/Category/CreateCategory/" class="btn btn-info">Yeni Kategori Girişi</a>
+                </table>
+            </div>
 
+        </div>
 
+    </div>
 </div>
-
