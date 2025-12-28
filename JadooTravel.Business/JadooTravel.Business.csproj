@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.9" />
@@ -15,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JadooTravel.DataAccess\JadooTravel.DataAccess.csproj" />
+    <ProjectReference Include="..\JadooTravel.Dto\JadooTravel.Dto.csproj" />
     <ProjectReference Include="..\JadooTravel.Entity\JadooTravel.Entity.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JadooTravel.UI.ViewComponents
+namespace JadooTravel.UI.ViewComponents.Default
 {
-    public class _DefaultScriptViewComponent:ViewComponent
+    public class _DefaultAIRecommendation:ViewComponent
     {
         public IViewComponentResult Invoke()
         {

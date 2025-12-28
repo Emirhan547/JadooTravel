@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JadooTravel.ViewComponents
+namespace JadooTravel.UI.ViewComponents.UILayout
 {
-    public class _DefaultNavbarViewComponent:ViewComponent
+    public class _UILayoutNavbarViewComponent:ViewComponent
     {
         public IViewComponentResult Invoke()
             { 

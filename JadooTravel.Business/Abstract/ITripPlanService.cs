@@ -1,4 +1,5 @@
-﻿using JadooTravel.Entity.Entities;
+﻿using JadooTravel.Dto.Dtos.TripPlanDtos;
+using JadooTravel.Entity.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JadooTravel.Business.Abstract
 {
-    public interface ITripPlanService : IGenericService<TripPlan>
+    public interface ITripPlanService : IGenericService<ResultTripPlanDto,CreateTripPlanDto,UpdateTripPlanDto>
     {
     }
 }

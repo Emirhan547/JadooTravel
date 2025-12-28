@@ -6,24 +6,22 @@ using JadooTravel.Dto.Dtos.DestinationDtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace JadooTravel.ViewComponents
+namespace JadooTravel.UI.ViewComponents.Default
 {
     public class _DefaultDestinationViewComponent:ViewComponent
     {
         private readonly IDestinationService _destinationService;
-        private readonly IMapper _mapper;
 
-        public _DefaultDestinationViewComponent(IDestinationService destinationService, IMapper mapper)
+        public _DefaultDestinationViewComponent(IDestinationService destinationService)
         {
             _destinationService = destinationService;
-            _mapper = mapper;
+
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var values=await _destinationService.TGetAllListAsync();
-            var result = _mapper.Map<List<ResultDestinationDto>>(values);
-            return View(result);
+            var values=await _destinationService.GetAllAsync();
+            return View(values);
         }
     }
 }

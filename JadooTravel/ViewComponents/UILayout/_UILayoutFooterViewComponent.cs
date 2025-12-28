@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JadooTravel.UI.ViewComponents
+namespace JadooTravel.UI.ViewComponents.UILayout
 {
-    public class _DefaultFooterViewComponent:ViewComponent
+    public class _UILayoutFooterViewComponent:ViewComponent
     {
         public IViewComponentResult Invoke()
         {

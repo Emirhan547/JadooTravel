@@ -6,24 +6,23 @@ using JadooTravel.Entity.Entities;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
-namespace JadooTravel.UI.Controllers
+namespace JadooTravel.UI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class TripPlanController : Controller
     {
         private readonly ITripPlanService _tripPlanService;
-        private readonly IMapper _mapper;
 
         public TripPlanController(ITripPlanService tripPlanService, IMapper mapper)
         {
             _tripPlanService = tripPlanService;
-            _mapper = mapper;
+
         }
 
         public async Task<IActionResult> TripPlanList()
         {
-            var values = await _tripPlanService.TGetAllListAsync();
-            var valueList = _mapper.Map<List<ResultTripPlanDto>>(values);
-            return View(valueList);
+            var values = await _tripPlanService.GetAllAsync();
+            return View(values);
         }
         [HttpGet]
         public IActionResult CreateTripPlan()
@@ -33,28 +32,26 @@ namespace JadooTravel.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTripPlan(CreateTripPlanDto createTripPlanDto)
         {
-            var values = _mapper.Map<TripPlan>(createTripPlanDto);
-            await _tripPlanService.TCreateAsync(values);
+            await _tripPlanService.CreateAsync(createTripPlanDto);
             return RedirectToAction("TripPlanList");
         }
 
         public async Task<IActionResult> DeleteTripPlan(ObjectId id)
         {
-            await _tripPlanService.TDeleteAsync(id);
+            await _tripPlanService.DeleteAsync(id);
             return RedirectToAction("TripPlanList");
         }
         [HttpGet]
         public async Task<IActionResult> UpdateTripPlan(ObjectId id)
         {
-            var value = await _tripPlanService.TGetByIdAsync(id);
-            var updateTripPlan = _mapper.Map<UpdateTripPlanDto>(value);
-            return View(updateTripPlan);
+            var value = await _tripPlanService.GetByIdAsync(id);
+            return View(value);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateFeature(UpdateTripPlanDto updateTripPlanDto)
         {
-            var values = _mapper.Map<TripPlan>(updateTripPlanDto);
-            await _tripPlanService.TUpdateAsync(values);
+ 
+            await _tripPlanService.UpdateAsync(updateTripPlanDto);
             return RedirectToAction("TripPlanList");
         }
     }

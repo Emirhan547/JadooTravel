@@ -7,24 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Threading.Tasks;
 
-namespace JadooTravel.Controllers
+namespace JadooTravel.UI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
 
         public CategoryController(ICategoryService categoryService, IMapper mapper)
         {
             _categoryService = categoryService;
-            _mapper = mapper;
         }
 
         public async Task<IActionResult> CategoryList()
         {
-            var values = await _categoryService.TGetAllListAsync();
-            var valueList= _mapper.Map<List<ResultCategoryDto>>(values);    
-            return View(valueList);
+            var values = await _categoryService.GetAllAsync(); 
+            return View(values);
         }
         [HttpGet]
         public IActionResult CreateCategory()
@@ -34,28 +32,25 @@ namespace JadooTravel.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDto)
         {
-            var values = _mapper.Map<Category>(createCategoryDto);
-            await _categoryService.TCreateAsync(values);
+            await _categoryService.CreateAsync(createCategoryDto);
             return RedirectToAction("CategoryList");
         }
         
         public async Task<IActionResult> DeleteCategory(ObjectId id)
         {
-            await _categoryService.TDeleteAsync(id);
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction("CategoryList");
         }
         [HttpGet]
         public async Task<IActionResult> UpdateCategory(ObjectId id)
         {
-            var value = await _categoryService.TGetByIdAsync(id);
-            var updateCategory = _mapper.Map<UpdateCategoryDto>(value);
-            return View(updateCategory);
+            var value = await _categoryService.GetByIdAsync(id);
+            return View(value);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryDto updateCategoryDto)
         {
-            var values = _mapper.Map<Category>(updateCategoryDto);
-            await _categoryService.TUpdateAsync(values);
+            await _categoryService.UpdateAsync(updateCategoryDto);
             return RedirectToAction("CategoryList");
         }
     }

@@ -8,24 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Threading.Tasks;
 
-namespace JadooTravel.Controllers
+namespace JadooTravel.UI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class DestinationController : Controller
     {
         private readonly IDestinationService _destinationService;
-        private readonly IMapper _mapper;
 
         public DestinationController(IDestinationService destinationService, IMapper mapper)
         {
             _destinationService = destinationService;
-            _mapper = mapper;
         }
 
         public async Task<IActionResult> DestinationList()
         {
-            var values = await _destinationService.TGetAllListAsync();
-            var valueList = _mapper.Map<List<ResultDestinationDto>>(values);
-            return View(valueList);
+            var values = await _destinationService.GetAllAsync();
+            return View(values);
         }
         [HttpGet]
         public IActionResult CreateDestination()
@@ -35,28 +33,25 @@ namespace JadooTravel.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateDestination(CreateDestinationDto createDestinationDto)
         {
-            var values = _mapper.Map<Destination>(createDestinationDto);
-            await _destinationService.TCreateAsync(values);
+            await _destinationService.CreateAsync(createDestinationDto);
             return RedirectToAction("DestinationList");
         }
 
         public async Task<IActionResult> DeleteDestination(ObjectId id)
         {
-            await _destinationService.TDeleteAsync(id);
+            await _destinationService.DeleteAsync(id);
             return RedirectToAction("DestinationList");
         }
         [HttpGet]
         public async Task<IActionResult> UpdateDestination(ObjectId id)
         {
-            var value = await _destinationService.TGetByIdAsync(id);
-            var updateDestination = _mapper.Map<UpdateDestinationDto>(value);
-            return View(updateDestination);
+            var value = await _destinationService.GetByIdAsync(id);
+            return View(value);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateDestination(UpdateDestinationDto updateDestinationDto)
         {
-            var values = _mapper.Map<Destination>(updateDestinationDto);
-            await _destinationService.TUpdateAsync(values);
+            await _destinationService.UpdateAsync(updateDestinationDto);
             return RedirectToAction("DestinationList");
         }
     }

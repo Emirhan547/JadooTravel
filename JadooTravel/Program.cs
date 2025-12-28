@@ -1,8 +1,8 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Business.Concrete;
 using JadooTravel.DataAccess.Context;
-using JadooTravel.UI.Extensions;
-using Microsoft.AspNetCore.Localization;
+using JadooTravel.Business.Extensions;
+using JadooTravel.DataAccess.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -11,10 +11,12 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddRepositoryExtensions();
+builder.Services.AddServiceExtensions();
 builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddServiceExtensions();
+
 
 
 var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbConnection");
@@ -53,6 +55,11 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+    app.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+ 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

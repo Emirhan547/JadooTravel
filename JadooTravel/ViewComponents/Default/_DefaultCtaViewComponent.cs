@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JadooTravel.ViewComponents
+namespace JadooTravel.UI.ViewComponents.Default
 {
-    public class _DefaultHeadViewComponent:ViewComponent
+    public class _DefaultCtaViewComponent:ViewComponent
     {
         public IViewComponentResult Invoke()
         {

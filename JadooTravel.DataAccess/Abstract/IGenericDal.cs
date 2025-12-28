@@ -12,7 +12,7 @@ namespace JadooTravel.DataAccess.Abstract
         Task CreateAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(ObjectId id);
-        Task<List<T>> GetAllListAsync();
+        Task<List<T>> GetAllAsync();
         Task<T> GetByIdAsync(ObjectId id);
     }
 }

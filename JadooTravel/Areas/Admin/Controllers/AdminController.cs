@@ -4,8 +4,9 @@ using JadooTravel.Dto.Dtos.DashboardDtos;
 using JadooTravel.Dto.Dtos.DestinationDtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JadooTravel.UI.Controllers
+namespace JadooTravel.UI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class AdminController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -25,10 +26,10 @@ namespace JadooTravel.UI.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
-            var categories = await _categoryService.TGetAllListAsync();
-            var destinations = await _destinationService.TGetAllListAsync();
-            var bookings = await _bookingService.TGetAllListAsync();
-            var testimonials = await _testimonialService.TGetAllListAsync();
+            var categories = await _categoryService.GetAllAsync();
+            var destinations = await _destinationService.GetAllAsync();
+            var bookings = await _bookingService.GetAllAsync();
+            var testimonials = await _testimonialService.GetAllAsync();
 
             var destinationDtos = _mapper.Map<List<ResultDestinationDto>>(destinations);
 
@@ -53,10 +54,10 @@ namespace JadooTravel.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDestinationCapacityData()
         {
-            var destinations = await _destinationService.TGetAllListAsync();
-            var destinationDtos = _mapper.Map<List<ResultDestinationDto>>(destinations);
+            var destinations = await _destinationService.GetAllAsync();
 
-            var data = destinationDtos.Select(d => new
+
+            var data = destinations.Select(d => new
             {
                 cityCountry = d.CityCountry,
                 capacity = d.Capacity

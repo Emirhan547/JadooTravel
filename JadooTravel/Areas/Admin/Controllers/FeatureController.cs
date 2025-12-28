@@ -6,24 +6,23 @@ using JadooTravel.Entity.Entities;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
-namespace JadooTravel.UI.Controllers
+namespace JadooTravel.UI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class FeatureController : Controller
     {
         private readonly IFeatureService _featureService;
-        private readonly IMapper _mapper;
 
         public FeatureController(IFeatureService featureService, IMapper mapper)
         {
             _featureService = featureService;
-            _mapper = mapper;
+
         }
 
         public async Task<IActionResult> FeatureList()
         {
-            var values = await _featureService.TGetAllListAsync();
-            var valueList = _mapper.Map<List<ResultFeatureDto>>(values);
-            return View(valueList);
+            var values = await _featureService.GetAllAsync();
+            return View(values);
         }
         [HttpGet]
         public IActionResult CreateFeature()
@@ -33,28 +32,25 @@ namespace JadooTravel.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateFeature(CreateFeatureDto createFeatureDto)
         {
-            var values = _mapper.Map<Feature>(createFeatureDto);
-            await _featureService.TCreateAsync(values);
+            await _featureService.CreateAsync(createFeatureDto);
             return RedirectToAction("FeatureList");
         }
 
         public async Task<IActionResult> DeleteFeature(ObjectId id)
         {
-            await _featureService.TDeleteAsync(id);
+            await _featureService.DeleteAsync(id);
             return RedirectToAction("FeatureList");
         }
         [HttpGet]
         public async Task<IActionResult> UpdateFeature(ObjectId id)
         {
-            var value = await _featureService.TGetByIdAsync(id);
-            var updateFeature = _mapper.Map<UpdateFeatureDto>(value);
-            return View(updateFeature);
+            var value = await _featureService.GetByIdAsync(id);
+            return View(value);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateFeature(UpdateFeatureDto updateFeatureDto)
         {
-            var values = _mapper.Map<Feature>(updateFeatureDto);
-            await _featureService.TUpdateAsync(values);
+            await _featureService.UpdateAsync(updateFeatureDto);
             return RedirectToAction("FeatureList");
         }
     }

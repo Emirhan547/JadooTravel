@@ -3,14 +3,17 @@
 }
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
-    @await Component.InvokeAsync("_DefaultHead")
+    @await Component.InvokeAsync("_UILayoutHead")
 <body>
     <main class="main" id="top">
-        @await Component.InvokeAsync("_DefaultNavbar")
+        @await Component.InvokeAsync("_UILayoutNavbar")
+
         @RenderBody()
+
+        @await Component.InvokeAsync("_UILayoutFooter")
     </main>
 
-    @await Component.InvokeAsync("_DefaultScript")
+    @await Component.InvokeAsync("_UILayoutScript")
     @RenderSection("Scripts", required: false)
 </body>
 </html>

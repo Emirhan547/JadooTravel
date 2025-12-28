@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace JadooTravel.Business.Abstract
 {
-    public interface IGenericService<T> where T : class
+    public interface IGenericService<TResult,TCreate,TUpdate>
     {
-        Task TCreateAsync(T entity);
-        Task TUpdateAsync(T entity);
-        Task TDeleteAsync(ObjectId id);
-        Task<List<T>> TGetAllListAsync();
-        Task<T> TGetByIdAsync(ObjectId id);
+        Task CreateAsync(TCreate create);
+        Task UpdateAsync(TUpdate update);
+        Task DeleteAsync(ObjectId id);
+        Task<List<TResult>> GetAllAsync();
+        Task<TResult> GetByIdAsync(ObjectId id);
     }
 }
