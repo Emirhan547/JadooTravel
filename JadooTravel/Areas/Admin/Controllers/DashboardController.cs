@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JadooTravel.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class AdminController : Controller
+    public class DashboardController : Controller
     {
         private readonly ICategoryService _categoryService;
         private readonly IDestinationService _destinationService;
@@ -15,7 +15,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         private readonly ITestimonialService _testimonialService;
         private readonly IMapper _mapper;
 
-        public AdminController(ICategoryService categoryService, IDestinationService destinationService, IBookingService bookingService, ITestimonialService testimonialService, IMapper mapper)
+        public DashboardController(ICategoryService categoryService, IDestinationService destinationService, IBookingService bookingService, ITestimonialService testimonialService, IMapper mapper)
         {
             _categoryService = categoryService;
             _destinationService = destinationService;

@@ -1,7 +1,8 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Business.Concrete;
-using JadooTravel.DataAccess.Context;
 using JadooTravel.Business.Extensions;
+using JadooTravel.Business.Mappings;
+using JadooTravel.DataAccess.Context;
 using JadooTravel.DataAccess.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,7 +16,8 @@ builder.Services.AddRepositoryExtensions();
 builder.Services.AddServiceExtensions();
 builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(typeof(GeneralMapping).Assembly);
+
 
 
 
