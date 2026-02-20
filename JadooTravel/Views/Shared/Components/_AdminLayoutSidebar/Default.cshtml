@@ -1,0 +1,69 @@
+﻿<nav id="sidebar">
+    <div class="sidebar_blog_1">
+        <div class="sidebar-header">   
+        </div>
+
+        <div class="sidebar_user_info">
+            <div class="user_profle_side">
+                <div class="user_img">
+                    <img class="img-responsive rounded-circle"
+                         src="~/pluto-1.0.0/images/layout_img/ben (1).jpg"
+                         style="height:60px;width:60px;object-fit:cover;" />
+                </div>
+                <div class="user_info">
+                    <h6>Admin</h6>
+                    <p><span class="online_animation"></span> Online</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar_blog_2">
+        <h4>General</h4>
+        <ul class="list-unstyled components">
+
+            <li>
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="AdminDashboard">
+                    <i class="fa fa-dashboard yellow_color"></i> <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="Booking" asp-action="BookingList">
+                    <i class="fa fa-book blue1_color"></i> <span>Booking</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="Category" asp-action="CategoryList">
+                    <i class="fa fa-list red_color"></i> <span>Kategoriler</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="Destination" asp-action="DestinationList">
+                    <i class="fa fa-comments yellow_color"></i> <span>Destination</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="Feature" asp-action="FeatureList">
+                    <i class="fa fa-info-circle blue1_color"></i> <span>Feature</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="Testimonial" asp-action="TestimonialList">
+                    <i class="fa fa-user-shield yellow_color"></i> <span>Testimonial</span>
+                </a>
+            </li>
+
+            <li>
+                <a asp-area="Admin" asp-controller="TripPlan" asp-action="TripPlanList">
+                    <i class="fa fa-users blue1_color"></i> <span>TripPlan</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</nav>

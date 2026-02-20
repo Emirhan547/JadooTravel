@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+    @await Component.InvokeAsync("_UILayoutHead")
+<body>
+    <main class="main" id="top">
+        @await Component.InvokeAsync("_UILayoutNavbar")
+
+        @RenderBody()
+
+        @await Component.InvokeAsync("_UILayoutFooter")
+    </main>
+
+    @await Component.InvokeAsync("_UILayoutScript")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

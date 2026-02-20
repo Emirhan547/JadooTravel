@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JadooTravel.UI", "JadooTravel\JadooTravel.UI.csproj", "{7B1345AE-744A-4686-AB4D-E832E65E7314}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JadooTravel.Business", "JadooTravel.Business\JadooTravel.Business.csproj", "{4F1134BE-9ACF-47E7-9963-AE9235516EB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JadooTravel.Dto", "JadooTravel.Dto\JadooTravel.Dto.csproj", "{BE1F1DB2-0F21-47E2-9091-D137E8E07660}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JadooTravel.Entity", "JadooTravel.Entity\JadooTravel.Entity.csproj", "{24D4E8A5-58CA-4A8A-BF89-EAD69F87D10A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JadooTravel.DataAccess", "JadooTravel.DataAccess\JadooTravel.DataAccess.csproj", "{98135B36-422B-B9CA-DBE7-2BA154DAA1B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B1345AE-744A-4686-AB4D-E832E65E7314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B1345AE-744A-4686-AB4D-E832E65E7314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B1345AE-744A-4686-AB4D-E832E65E7314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B1345AE-744A-4686-AB4D-E832E65E7314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F1134BE-9ACF-47E7-9963-AE9235516EB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F1134BE-9ACF-47E7-9963-AE9235516EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F1134BE-9ACF-47E7-9963-AE9235516EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F1134BE-9ACF-47E7-9963-AE9235516EB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE1F1DB2-0F21-47E2-9091-D137E8E07660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE1F1DB2-0F21-47E2-9091-D137E8E07660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE1F1DB2-0F21-47E2-9091-D137E8E07660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE1F1DB2-0F21-47E2-9091-D137E8E07660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D4E8A5-58CA-4A8A-BF89-EAD69F87D10A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D4E8A5-58CA-4A8A-BF89-EAD69F87D10A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D4E8A5-58CA-4A8A-BF89-EAD69F87D10A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D4E8A5-58CA-4A8A-BF89-EAD69F87D10A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98135B36-422B-B9CA-DBE7-2BA154DAA1B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98135B36-422B-B9CA-DBE7-2BA154DAA1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98135B36-422B-B9CA-DBE7-2BA154DAA1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98135B36-422B-B9CA-DBE7-2BA154DAA1B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ABFA9042-BEF4-46F5-B006-018D876D1A9B}
+	EndGlobalSection
+EndGlobal

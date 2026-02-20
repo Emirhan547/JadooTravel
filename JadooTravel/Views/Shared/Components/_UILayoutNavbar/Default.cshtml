@@ -1,0 +1,123 @@
+﻿
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-bold fs-2" href="/Default/Index">
+            <img src="/public/assets/img/logo.svg" width="40" alt="logo" />
+            <span class="ms-2">Jadoo</span>
+        </a>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link fw-medium active" aria-current="page" href="/Default/Index">Anasayfa</a>
+                     
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#service">Servisler</a>
+                       
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#destination">Destinasyonlar</a>
+                  
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#booking">Rezervasyon</a>
+                       
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#testimonial">Yorumlar</a>
+                      
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-medium" href="#ai-recommendations">
+                        <i class="fas fa-robot me-1"></i> AI Rehber
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2 ms-lg-3">
+               
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe"></i>
+                       
+                       
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                        <li>
+                            <a class="dropdown-item" href="#" data-language-code="tr" data-language-name="Turkish" data-language-label="Türkçe">🇹🇷 Türkçe</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-language-code="en" data-language-name="English" data-language-label="English">🇺🇸 English</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-language-code="de" data-language-name="German" data-language-label="Deutsch">🇩🇪 Deutsch</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-language-code="fr" data-language-name="French" data-language-label="Français">🇫🇷 Français</a>
+                        </li>
+                    </ul>
+                </div>
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            @User.Identity.Name
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="AdminDashboard">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Admin Panel
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            }
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>Profilim
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog me-2"></i>Ayarlar
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" asp-action="Logout" asp-controller="Auth" class="d-inline">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a asp-action="Login" asp-controller="Auth" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Giriş Yap
+                    </a>
+                    <a asp-action="Register" asp-controller="Auth" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user-plus me-1"></i>
+                        Kayıt Ol
+                    </a>
+                }
+            </div>
+            </div>
+        </div>
+
+</nav>

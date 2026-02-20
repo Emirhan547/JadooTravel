@@ -1,0 +1,45 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    @* HEAD *@
+    @await Component.InvokeAsync("_AdminLayoutHead")
+
+<body class="dashboard dashboard_1">
+    <div class="full_container">
+        <div class="inner_container">
+
+            @* SIDEBAR *@
+            @await Component.InvokeAsync("_AdminLayoutSidebar")
+
+            <!-- CONTENT -->
+            <div id="content">
+
+                @* TOPBAR *@
+                @await Component.InvokeAsync("_AdminLayoutTopbar")
+
+                <!-- BODY -->
+                <div class="midde_cont">
+
+                    <div class="container-fluid">
+                        @RenderBody()
+                    </div>
+
+                    @* FOOTER *@
+                    @await Component.InvokeAsync("_AdminLayoutFooter")
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* SCRIPTS *@
+    @await Component.InvokeAsync("_AdminLayoutScript")
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

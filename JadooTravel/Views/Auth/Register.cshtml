@@ -1,0 +1,93 @@
+﻿@model JadooTravel.Dto.Dtos.AuthDtos.RegisterDto
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<section class="pt-9 pb-9">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <img src="/public/assets/img/logo.svg" width="50" alt="logo" class="mb-3" />
+                            <h3 class="fw-bold mb-2">Hesap Oluştur</h3>
+                            <p class="text-muted">Hemen üye olun ve keşfe başlayın</p>
+                        </div>
+
+                        <form method="post" asp-action="Register" asp-controller="Auth">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label fw-medium">
+                                    <i class="fas fa-user me-2"></i>Ad Soyad
+                                </label>
+                                <input asp-for="FullName" class="form-control form-control-lg" placeholder="Ad Soyad" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label fw-medium">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <input asp-for="Email" class="form-control form-control-lg" placeholder="ornek@email.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="UserName" class="form-label fw-medium">
+                                    <i class="fas fa-at me-2"></i>Kullanıcı Adı
+                                </label>
+                                <input asp-for="UserName" class="form-control form-control-lg" placeholder="kullaniciadi" />
+                                <span asp-validation-for="UserName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label fw-medium">
+                                    <i class="fas fa-lock me-2"></i>Şifre
+                                </label>
+                                <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="••••••••" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="ConfirmPassword" class="form-label fw-medium">
+                                    <i class="fas fa-lock me-2"></i>Şifre Tekrar
+                                </label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="••••••••" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 10px;">
+                                    <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="mb-0">
+                                    Zaten hesabınız var mı?
+                                    <a asp-action="Login" asp-controller="Auth" class="text-primary fw-bold text-decoration-none">
+                                        Giriş Yap
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a asp-action="Index" asp-controller="Default" class="text-muted text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>Ana Sayfaya Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
