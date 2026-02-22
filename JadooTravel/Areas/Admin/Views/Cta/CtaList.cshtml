@@ -1,0 +1,36 @@
+﻿@using JadooTravel.Dto.Dtos.CtaDtos
+@model List<ResultCtaDto>
+@{
+    ViewData["Title"] = "CTA Alanı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-bullhorn mr-1"></i> CTA Listesi</h3>
+                <div class="card-tools"><a href="/Admin/Cta/CreateCta" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Yeni CTA</a></div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead><tr><th>#</th><th>Başlık</th><th>Placeholder</th><th>Buton</th><th>İşlemler</th></tr></thead>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr><td>@count</td><td>@item.Title</td><td><a href="/Admin/Cta/UpdateCta/@item.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></a> <a href="/Admin/Cta/DeleteCta/@item.Id" class="btn btn-danger btn-sm" onclick="return confirm('Silinsin mi?')"><i class="fa fa-trash"></i></a></td></tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted p-4">Kayıt bulunamadı.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

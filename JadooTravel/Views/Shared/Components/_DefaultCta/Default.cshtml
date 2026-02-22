@@ -1,4 +1,6 @@
-﻿<section class="pt-6">
+﻿@using JadooTravel.Dto.Dtos.CtaDtos
+@model ResultCtaDto
+<section class="pt-6">
     <div class="container">
         <div class="py-8 px-5 position-relative text-center" style="background-color: rgba(223, 215, 249, 0.199);border-radius: 129px 20px 20px 20px;">
             <div class="position-absolute start-100 top-0 translate-middle ms-md-n3 ms-n4 mt-3">
@@ -12,7 +14,7 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-10">
-                    <h2 class="text-secondary lh-1-7 mb-7">Subscribe to get information, latest news and other interesting offers about Cobham</h2>
+                    <h2 class="text-secondary lh-1-7 mb-7">@(Model?.Title ?? "Subscribe to get information, latest news and other interesting offers about Cobham")</h2>
                     <form class="row g-3 align-items-center w-lg-75 mx-auto">
                         <div class="col-sm">
                             <div class="input-group-icon">

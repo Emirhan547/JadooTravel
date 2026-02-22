@@ -21,6 +21,8 @@ namespace JadooTravel.Business.Extensions
             services.AddScoped<ITestimonialService, TestimonialManager>();
 
             services.AddScoped<ITripPlanService, TripPlanManager>();
+            services.AddScoped<ICtaService, CtaManager>();
+            services.AddScoped<IPartnerService, PartnerManager>();
            
 
         }

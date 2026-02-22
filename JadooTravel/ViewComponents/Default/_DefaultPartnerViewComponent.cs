@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JadooTravel.Business.Abstract;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JadooTravel.UI.ViewComponents.Default
 {
-    public class _DefaultPartnerViewComponent:ViewComponent
+    public class _DefaultPartnerViewComponent(IPartnerService _partnerService):ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View();
+            var values = await _partnerService.GetAllAsync();
+            return View(values);
         }
     }
 }

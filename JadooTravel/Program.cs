@@ -1,13 +1,14 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Business.Extensions;
 using JadooTravel.Business.Mappings;
+using JadooTravel.Business.Options;
+using JadooTravel.DataAccess.Extensions;
 using JadooTravel.Entity.Entities;
 using JadooTravel.Services;
+using JadooTravel.UI.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
-using JadooTravel.DataAccess.Extensions;
-using Microsoft.AspNetCore.Builder;
-using JadooTravel.UI.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -15,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServiceExtensions();
 builder.Services.AddRepositoryExtensions();
 builder.Services.AddHttpClient<IAIService, OpenAiService>();
-
+builder.Services.Configure<OpenAiOptions>(builder.Configuration.GetSection("OpenAI"));
 builder.Services.AddAutoMapper(typeof(GeneralMapping).Assembly);
 
 

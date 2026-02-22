@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JadooTravel.Business.Abstract;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JadooTravel.UI.ViewComponents.Default
 {
-    public class _DefaultCtaViewComponent:ViewComponent
+    public class _DefaultCtaViewComponent(ICtaService _ctaService):ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View();
+            var values = await _ctaService.GetAllAsync();
+            var value = values.FirstOrDefault();
+            return View(value);
         }
     }
 }

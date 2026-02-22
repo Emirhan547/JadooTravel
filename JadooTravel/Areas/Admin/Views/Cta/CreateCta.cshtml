@@ -1,0 +1,13 @@
+﻿@using JadooTravel.Dto.Dtos.CtaDtos
+@model CreateCtaDto
+@{
+    ViewData["Title"] = "Yeni CTA"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="card">
+    <div class="card-header"><h3 class="card-title">Yeni CTA Oluştur</h3></div>
+    <form method="post">
+        <div class="card-body">
+            <div class="form-group"><label>Başlık</label><input asp-for="Title" class="form-control" /></div>
+        </div><div class="card-footer"><button class="btn btn-success">Kaydet</button><a href="/Admin/Cta/CtaList" class="btn btn-secondary ml-2">İptal</a></div>
+    </form>
+</div>
