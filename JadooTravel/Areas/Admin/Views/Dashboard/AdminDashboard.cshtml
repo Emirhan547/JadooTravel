@@ -1,48 +1,170 @@
 ﻿@using JadooTravel.Dto.Dtos.DashboardDtos
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
 @model DashboardStatisticsDto
+
+@inject IJsonHelper Json
+
 @{
     ViewData["Title"] = "AdminDashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    .gradient-card {
+        border: none;
+        border-radius: 16px;
+        color: #fff;
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, .10);
+    }
+
+    .gradient-primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    .gradient-success {
+        background: linear-gradient(135deg, #059669, #047857);
+    }
+
+    .gradient-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .gradient-info {
+        background: linear-gradient(135deg, #0891b2, #0e7490);
+    }
+
+    .panel-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, .06);
+    }
+
+    .metric-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        font-size: .85rem;
+        padding: .45rem .75rem;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+    .soft-table thead th {
+        border: none;
+        background: #f8fafc;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    .soft-table td {
+        border-color: #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .destination-thumb {
+        width: 68px;
+        height: 52px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+</style>
+
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h2 class="mb-4"></h2>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h3 class="mb-1">Admin Dashboard</h3>
+            <p class="text-muted mb-0">Genel istatistikler ve dinamik analytics görünümü</p>
         </div>
+
+        <form method="get" asp-area="Admin" asp-controller="Dashboard" asp-action="AdminDashboard" class="d-flex align-items-end gap-2">
+            <div>
+                <label class="form-label mb-1">Başlangıç</label>
+                <input type="date" class="form-control" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div>
+                <label class="form-label mb-1">Bitiş</label>
+                <input type="date" class="form-control" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <button type="submit" class="btn btn-dark">Filtrele</button>
+        </form>
     </div>
 
     <!-- Statistics Cards -->
     <div class="row">
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card bg-primary text-white">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card gradient-card gradient-primary">
                 <div class="card-body">
-                    <h5 class="card-title">Toplam Kategori</h5>
+                    <h6 class="text-uppercase">Toplam Kategori</h6>
                     <h2 class="mb-0">@Model.TotalCategories</h2>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card bg-success text-white">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card gradient-card gradient-success">
                 <div class="card-body">
-                    <h5 class="card-title">Toplam Destinasyon</h5>
+                    <h6 class="text-uppercase">Toplam Destinasyon</h6>
                     <h2 class="mb-0">@Model.TotalDestinations</h2>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card bg-warning text-white">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card gradient-card gradient-warning">
                 <div class="card-body">
-                    <h5 class="card-title">Toplam Rezervasyon</h5>
+                    <h6 class="text-uppercase">Toplam Rezervasyon</h6>
                     <h2 class="mb-0">@Model.TotalBookings</h2>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card bg-info text-white">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card gradient-card gradient-info">
                 <div class="card-body">
-                    <h5 class="card-title">Toplam Yorum</h5>
+                    <h6 class="text-uppercase">Toplam Yorum</h6>
                     <h2 class="mb-0">@Model.TotalTestimonials</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Toplam Sayfa Görüntüleme</h6>
+                    <h4>@Model.TotalPageViews</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Tekil Ziyaretçi</h6>
+                    <h4>@Model.UniqueVisitors</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Toplam Ciro</h6>
+                    <h4>@Model.TotalRevenue.ToString("N0") ₺</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Dönüşüm Oranı</h6>
+                    <h4>%@Model.ConversionRate.ToString("N2")</h4>
                 </div>
             </div>
         </div>
@@ -50,26 +172,92 @@
 
     <!-- Charts Row -->
     <div class="row">
-        <!-- Destination Capacity Chart -->
         <div class="col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Destinasyon Kapasiteleri</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="capacityChart" height="300"></canvas>
-                </div>
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white"><h6 class="mb-0">Günlük Trafik & Rezervasyon Trendi</h6></div>
+                <div class="card-body"><canvas id="dailyTrendChart" height="250"></canvas></div>
             </div>
         </div>
 
-        <!-- Destination Price Chart -->
         <div class="col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Destinasyon Fiyatları</h5>
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white"><h6 class="mb-0">Trafik Kaynakları Dağılımı</h6></div>
+                <div class="card-body"><canvas id="trafficSourceChart" height="250"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white"><h6 class="mb-0">Destinasyon Kapasiteleri</h6></div>
+                <div class="card-body"><canvas id="capacityChart" height="260"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white"><h6 class="mb-0">Destinasyon Bazlı Rezervasyon</h6></div>
+                <div class="card-body"><canvas id="destinationBookingChart" height="260"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Top Destinasyon Analytics</h6>
+                    <span class="metric-badge">En çok rezervasyon alan turlar</span>
                 </div>
+
+                <div class="card-body table-responsive">
+                    <table class="table soft-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Destinasyon</th>
+                                <th>Görüntülenme</th>
+                                <th>Rezervasyon</th>
+                                <th>Ciro</th>
+                                <th>Dönüşüm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.DestinationAnalytics)
+                            {
+                                <tr>
+                                    <td>@item.CityCountry</td>
+                                    <td>@item.PageViews</td>
+                                    <td>@item.Bookings</td>
+                                    <td>@item.Revenue.ToString("N0") ₺</td>
+                                    <td>%@item.ConversionRate.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="card panel-card h-100">
+                <div class="card-header bg-white"><h6 class="mb-0">Top Kullanıcılar</h6></div>
                 <div class="card-body">
-                    <canvas id="priceChart" height="300"></canvas>
+                    @foreach (var user in Model.TopUsers.Take(6))
+                    {
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <strong>@user.UserId</strong><br />
+                                <small class="text-muted">@user.TotalVisits ziyaret · @user.TotalPageViews görüntülenme</small>
+                            </div>
+
+                            <div class="text-end">
+                                <div class="fw-semibold">@user.TotalSpent.ToString("N0") ₺</div>
+                                <small class="text-muted">@user.Bookings rezervasyon</small>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -77,130 +265,131 @@
 
     <!-- Latest Destinations -->
     <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Son Eklenen 5 Tur</h5>
+        <div class="col-12 mb-4">
+            <div class="card panel-card">
+                <div class="card-header bg-white"><h6 class="mb-0">Son Eklenen Turlar</h6></div>
+
+                <div class="card-body table-responsive">
+                    <table class="table soft-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Görsel</th>
+                                <th>Şehir / Ülke</th>
+                                <th>Fiyat</th>
+                                <th>Kapasite</th>
+                                <th>Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.LatestDestinations.Take(5))
+                            {
+                                var img = string.IsNullOrWhiteSpace(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl;
+
+                                <tr>
+                                    <td>
+                                        <img src="@img" class="destination-thumb" alt="@item.CityCountry" />
+                                    </td>
+                                    <td>@item.CityCountry</td>
+                                    <td>@item.Price ₺</td>
+                                    <td>@item.Capacity kişi</td>
+                                    <td>@item.DayNight</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        @foreach (var item in Model.LatestDestinations.Take(5))
-                        {
-                            <div class="col-md-4 mb-3">
-                                <div class="card">
-                                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.CityCountry" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">@item.CityCountry</h5>
-                                        <p class="card-text">
-                                            <strong>Fiyat:</strong> @item.Price ₺<br />
-                                            <strong>Kapasite:</strong> @item.Capacity kişi<br />
-                                            <strong>Süre:</strong> @item.DayNight
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Last 4 Destinations for "Upcoming Schedules" Section -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Son Eklenen 4 Tur (Top Paying Client Altı)</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Görsel</th>
-                                    <th>Şehir/Ülke</th>
-                                    <th>Fiyat</th>
-                                    <th>Kapasite</th>
-                                    <th>Süre</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.LatestDestinations.Take(4))
-                                {
-                                    <tr>
-                                        <td><img src="@item.ImageUrl" alt="@item.CityCountry" style="width: 80px; height: 60px; object-fit: cover;"></td>
-                                        <td>@item.CityCountry</td>
-                                        <td>@item.Price ₺</td>
-                                        <td>@item.Capacity kişi</td>
-                                        <td>@item.DayNight</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Capacity Chart
-        var capacityCtx = document.getElementById('capacityChart').getContext('2d');
-        var capacityData = @Html.Raw(Json.Serialize(Model.DestinationCapacities.Select(d => new { label = d.CityCountry, value = d.Capacity })));
+        const dailyStats = @Html.Raw(Json.Serialize(Model.DailyStats));
+        const capacities = @Html.Raw(Json.Serialize(Model.DestinationCapacities));
+        const destinationAnalytics = @Html.Raw(Json.Serialize(Model.DestinationAnalytics));
+        const trafficSources = @Html.Raw(Json.Serialize(Model.TrafficSources));
 
-        new Chart(capacityCtx, {
-            type: 'bar',
+        const dailyLabels = dailyStats.map(x =>
+            new Date(x.date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })
+        );
+
+        new Chart(document.getElementById('dailyTrendChart').getContext('2d'), {
+            type: 'line',
             data: {
-                labels: capacityData.map(d => d.label),
-                datasets: [{
-                    label: 'Kapasite',
-                    data: capacityData.map(d => d.value),
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
+                labels: dailyLabels,
+                datasets: [
+                    {
+                        label: 'Sayfa Görüntüleme',
+                        data: dailyStats.map(x => x.pageViews),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37,99,235,0.2)',
+                        yAxisID: 'y',
+                        tension: 0.35,
+                        fill: true
+                    },
+                    {
+                        label: 'Rezervasyon',
+                        data: dailyStats.map(x => x.bookings),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16,185,129,0.1)',
+                        yAxisID: 'y1',
+                        tension: 0.35
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true, position: 'left' },
+                    y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } }
                 }
             }
         });
 
-        // Price Chart
-        var priceCtx = document.getElementById('priceChart').getContext('2d');
-        var priceData = @Html.Raw(Json.Serialize(Model.DestinationCapacities.Select(d => new { label = d.CityCountry, value = d.Price })));
-
-        new Chart(priceCtx, {
-            type: 'line',
+        new Chart(document.getElementById('trafficSourceChart').getContext('2d'), {
+            type: 'doughnut',
             data: {
-                labels: priceData.map(d => d.label),
+                labels: trafficSources.map(x => x.source),
                 datasets: [{
-                    label: 'Fiyat (₺)',
-                    data: priceData.map(d => d.value),
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2,
-                    tension: 0.4
+                    data: trafficSources.map(x => x.visits),
+                    backgroundColor: ['#2563eb', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444']
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('capacityChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: capacities.map(x => x.cityCountry),
+                datasets: [{
+                    label: 'Kapasite',
+                    data: capacities.map(x => x.capacity),
+                    backgroundColor: 'rgba(14,165,233,.65)',
+                    borderRadius: 8
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('destinationBookingChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: destinationAnalytics.map(x => x.cityCountry),
+                datasets: [{
+                    label: 'Rezervasyon',
+                    data: destinationAnalytics.map(x => x.bookings),
+                    backgroundColor: 'rgba(99,102,241,.7)',
+                    borderRadius: 8
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
         });
     </script>
 }
