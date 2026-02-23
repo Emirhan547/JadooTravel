@@ -32,6 +32,11 @@ if (string.IsNullOrWhiteSpace(mongoDatabaseName))
 builder.Services.AddSingleton<IMongoClient>(_ =>
     new MongoClient(mongoConnectionString));
 
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(mongoDatabaseName);
+});
 
 builder.Services
     .AddIdentity<AppUser, AppRole>(options =>

@@ -5,6 +5,7 @@ using JadooTravel.Dto.Dtos.DestinationDtos;
 using JadooTravel.Dto.Dtos.FeatureDtos;
 using JadooTravel.Dto.Dtos.TestimonialDtos;
 using JadooTravel.Dto.Dtos.TripPlanDtos;
+using JadooTravel.Dto.Dtos.UserDtos;
 using JadooTravel.Entity.Entities;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,8 @@ namespace JadooTravel.Business.Mappings
             CreateMap<ResultTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<CreateTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<UpdateTripPlanDto, TripPlan>().ReverseMap();
+
+            CreateMap<UserFavorite, UserFavoriteDto>().ReverseMap();
         }
     }
 }

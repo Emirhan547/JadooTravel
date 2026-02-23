@@ -1,18 +1,17 @@
-﻿
-
-using AspNetCore.Identity.MongoDbCore.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JadooTravel.Entity.Entities
+namespace JadooTravel.Dto.Dtos.UserDtos
 {
-
-    public class AppUser : MongoIdentityUser<string>
+    public class UpdateProfileDto
     {
-        public string FullName { get; set; } = string.Empty;
+        public string Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string Country { get; set; }

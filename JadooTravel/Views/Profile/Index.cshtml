@@ -1,0 +1,137 @@
+﻿@using JadooTravel.Dto.Dtos.UserDtos
+@model UserProfileDto
+
+@{
+    ViewData["Title"] = "Profilim";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<section class="pt-9 pb-9">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                    <div class="card-body p-5">
+                        <!-- Profile Header -->
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-3 text-center">
+                                <img src="@Model.ProfileImageUrl"
+                                     alt="@Model.FullName"
+                                     class="rounded-circle"
+                                     style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #667eea;">
+                            </div>
+                            <div class="col-md-9">
+                                <h2 class="fw-bold mb-2">@Model.FullName</h2>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-envelope me-2"></i>@Model.Email
+                                </p>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-phone me-2"></i>@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Belirtilmemiş" : Model.PhoneNumber)
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-calendar me-2"></i>Üye Olunma Tarihi: @Model.CreatedDate.ToString("dd.MM.yyyy")
+                                </p>
+                                <a href="/Profile/Edit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit me-2"></i>Düzenle
+                                </a>
+                                <a href="/Profile/ChangePassword" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key me-2"></i>Şifre Değiştir
+                                </a>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Statistics -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-primary fw-bold">@Model.TotalBookings</h3>
+                                        <p class="text-muted mb-0">
+                                            <i class="fas fa-book me-2"></i>Toplam Rezervasyon
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-danger fw-bold">@Model.TotalFavorites</h3>
+                                        <p class="text-muted mb-0">
+                                            <i class="fas fa-heart me-2"></i>Favori Destinasyon
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Contact Information -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold mb-3">İletişim Bilgileri</h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p class="text-muted mb-1">Adres:</p>
+                                <p class="fw-medium">@(string.IsNullOrEmpty(Model.Address) ? "Belirtilmemiş" : Model.Address)</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p class="text-muted mb-1">Şehir:</p>
+                                <p class="fw-medium">@(string.IsNullOrEmpty(Model.City) ? "Belirtilmemiş" : Model.City)</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p class="text-muted mb-1">Ülke:</p>
+                                <p class="fw-medium">@(string.IsNullOrEmpty(Model.Country) ? "Belirtilmemiş" : Model.Country)</p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Quick Links -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold mb-3">Hızlı Bağlantılar</h5>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="/Profile/MyBookings" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-history me-2"></i>Rezervasyonlarım
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="/Profile/MyFavorites" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-heart me-2"></i>Favorilerim
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <form method="post" asp-action="Logout" asp-controller="Auth" class="d-inline w-100">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (TempData["success"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: '@TempData["success"]'
+                        });
+                    </text>
+            }
+        });
+    </script>
+}

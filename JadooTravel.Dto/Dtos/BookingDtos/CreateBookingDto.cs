@@ -12,5 +12,10 @@ namespace JadooTravel.Dto.Dtos.BookingDtos
         public string Email { get; set; }
         public string Phone { get; set; }
         public string MessageBody { get; set; }
+        public string DestinationId { get; set; }
+        public decimal TotalPrice { get; set; }
+        public int PersonCount { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }
