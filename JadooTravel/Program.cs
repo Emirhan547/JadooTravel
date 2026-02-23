@@ -6,6 +6,7 @@ using JadooTravel.DataAccess.Extensions;
 using JadooTravel.Entity.Entities;
 using JadooTravel.Services;
 using JadooTravel.UI.Extensions;
+using JadooTravel.UI.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
@@ -78,7 +79,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+// Program.cs'e ekle:
+app.UseMiddleware<AnalyticsMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

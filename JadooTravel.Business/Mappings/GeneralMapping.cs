@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using JadooTravel.Dto.Dtos.BookingDtos;
 using JadooTravel.Dto.Dtos.CategoryDtos;
+using JadooTravel.Dto.Dtos.ChatDtos;
 using JadooTravel.Dto.Dtos.DestinationDtos;
 using JadooTravel.Dto.Dtos.FeatureDtos;
+using JadooTravel.Dto.Dtos.ReviewDtos;
 using JadooTravel.Dto.Dtos.TestimonialDtos;
 using JadooTravel.Dto.Dtos.TripPlanDtos;
 using JadooTravel.Dto.Dtos.UserDtos;
@@ -42,8 +44,15 @@ namespace JadooTravel.Business.Mappings
             CreateMap<ResultTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<CreateTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<UpdateTripPlanDto, TripPlan>().ReverseMap();
-
+            CreateMap<PageViewTrack, dynamic>().ReverseMap();
+            CreateMap<ConversionTrack, dynamic>().ReverseMap();
             CreateMap<UserFavorite, UserFavoriteDto>().ReverseMap();
+
+            CreateMap<DestinationReview, ResultReviewDto>().ReverseMap();
+            CreateMap<DestinationReview, UserReviewDto>().ReverseMap();
+            CreateMap<ChatMessage, ChatMessageResponseDto>().ReverseMap();
+            CreateMap<ChatMessage, ChatHistoryDto>().ReverseMap();
+            CreateMap<FAQ, FAQDto>().ReverseMap();
         }
     }
 }
