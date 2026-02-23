@@ -11,18 +11,17 @@ namespace JadooTravel.Business.Concrete
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly IMongoClient _mongoClient;
+      
         private readonly IMongoDatabase _mongoDatabase;
 
         public UserProfileService(
             UserManager<AppUser> userManager,
             IMapper mapper,
-            IMongoClient mongoClient)
+         IMongoDatabase mongoDatabase)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _mongoClient = mongoClient;
-            _mongoDatabase = mongoClient.GetDatabase("JadooTravelDb");
+            _mongoDatabase = mongoDatabase;
         }
 
         public async Task<UserProfileDto> GetProfileAsync(string userId)
@@ -32,9 +31,8 @@ namespace JadooTravel.Business.Concrete
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                     return null;
-
-                var bookingCollection = _mongoDatabase.GetCollection<dynamic>("Bookings");
-                var bookingFilter = Builders<dynamic>.Filter.Eq("UserId", userId);
+                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Booking");
+                var bookingFilter = Builders<Booking>.Filter.Eq(x => x.UserId, userId);
                 var bookingCount = await bookingCollection.CountDocumentsAsync(bookingFilter);
 
                 var favoriteCollection = _mongoDatabase.GetCollection<dynamic>("UserFavorites");

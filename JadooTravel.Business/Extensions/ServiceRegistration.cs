@@ -25,7 +25,7 @@ namespace JadooTravel.Business.Extensions
             services.AddScoped<IPartnerService, PartnerManager>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddScoped<IChatbotService, ChatbotService>();
-
+            services.AddScoped<IReviewService, ReviewService>();
         }
     }
 }

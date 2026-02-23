@@ -12,13 +12,12 @@ namespace JadooTravel.Business.Concrete
 {
     public class AnalyticsService : IAnalyticsService
     {
-        private readonly IMongoClient _mongoClient;
+     
         private readonly IMongoDatabase _mongoDatabase;
 
-        public AnalyticsService(IMongoClient mongoClient)
+        public AnalyticsService(IMongoDatabase mongoDatabase)
         {
-            _mongoClient = mongoClient;
-            _mongoDatabase = mongoClient.GetDatabase("JadooTravelDb");
+            _mongoDatabase = mongoDatabase;
         }
 
         public async Task TrackPageViewAsync(string pageUrl, string pageName, string userId, string sessionId)

@@ -21,8 +21,8 @@ builder.Services.Configure<OpenAiOptions>(builder.Configuration.GetSection("Open
 builder.Services.AddAutoMapper(typeof(GeneralMapping).Assembly);
 
 
-var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbConnection");
-var mongoDatabaseName = builder.Configuration["MongoDbSettings:DatabaseName"];
+var mongoConnectionString = builder.Configuration["MongoSettings:ConnectionString"];
+var mongoDatabaseName = builder.Configuration["MongoSettings:DatabaseName"];
 
 if (string.IsNullOrWhiteSpace(mongoConnectionString))
     throw new ArgumentNullException(nameof(mongoConnectionString));
@@ -70,7 +70,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+await app.Services.EnsureMongoIndexesAsync();
 
 
 

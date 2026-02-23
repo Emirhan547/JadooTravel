@@ -8,16 +8,15 @@ namespace JadooTravel.Business.Concrete
 {
     public class ReviewService : IReviewService
     {
-        private readonly IMongoClient _mongoClient;
+       
         private readonly IMongoDatabase _mongoDatabase;
         private readonly IMapper _mapper;
 
         public ReviewService(
-            IMongoClient mongoClient,
+          IMongoDatabase mongoDatabase,
             IMapper mapper)
         {
-            _mongoClient = mongoClient;
-            _mongoDatabase = mongoClient.GetDatabase("JadooTravelDb");
+            _mongoDatabase = mongoDatabase;
             _mapper = mapper;
         }
 

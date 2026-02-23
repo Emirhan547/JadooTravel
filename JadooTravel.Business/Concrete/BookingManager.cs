@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace JadooTravel.Business.Concrete
 {
-    public class BookingManager(IBookingDal _repository, IMapper _mapper, IMongoClient _mongoClient, IMongoDatabase _mongoDatabase) : IBookingService
+    public class BookingManager(IBookingDal _repository, IMapper _mapper) : IBookingService
     {
 
 
@@ -42,23 +42,8 @@ namespace JadooTravel.Business.Concrete
         }
         public async Task<List<UserBookingDto>> GetUserBookingsAsync(string userId)
         {
-            try
-            {
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Bookings");
-                var filter = Builders<Booking>.Filter.Eq(x => x.UserId, userId);
-                var sort = Builders<Booking>.Sort.Descending(x => x.CreatedDate);
-
-                var bookings = await bookingCollection
-                    .Find(filter)
-                    .Sort(sort)
-                    .ToListAsync();
-
-                return _mapper.Map<List<UserBookingDto>>(bookings);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Kullanıcı rezervasyonları yüklenirken hata: {ex.Message}");
-            }
+            var bookings = await _repository.GetByUserIdAsync(userId);
+            return _mapper.Map<List<UserBookingDto>>(bookings);
         }
 
         public async Task<ResultBookingDto> GetBookingDetailsAsync(string id)
@@ -69,89 +54,26 @@ namespace JadooTravel.Business.Concrete
 
         public async Task<bool> CancelBookingAsync(string bookingId, string userId)
         {
-            try
-            {
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Bookings");
-
-                var filter = Builders<Booking>.Filter.And(
-                    Builders<Booking>.Filter.Eq(x => x.Id, bookingId),
-                    Builders<Booking>.Filter.Eq(x => x.UserId, userId)
-                );
-
-                var update = Builders<Booking>.Update
-                    .Set(x => x.Status, BookingStatus.Cancelled)
-                    .Set(x => x.UpdatedDate, DateTime.UtcNow);
-
-                var result = await bookingCollection.UpdateOneAsync(filter, update);
-                return result.ModifiedCount > 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Rezervasyon iptal edilirken hata: {ex.Message}");
-            }
+            return await _repository.CancelBookingAsync(bookingId, userId);
         }
 
         public async Task<bool> UpdateBookingStatusAsync(UpdateBookingStatusDto updateStatusDto)
         {
-            try
-            {
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Bookings");
-
-                var update = Builders<Booking>.Update
-                    .Set(x => x.Status, updateStatusDto.Status)
-                    .Set(x => x.UpdatedDate, DateTime.UtcNow)
-                    .Set(x => x.AdminNotes, updateStatusDto.Notes);
-
-                if (updateStatusDto.Status == BookingStatus.Approved)
-                    update = update.Set(x => x.ApprovedDate, DateTime.UtcNow);
-
-                var result = await bookingCollection.UpdateOneAsync(
-                    Builders<Booking>.Filter.Eq(x => x.Id, updateStatusDto.BookingId),
-                    update
-                );
-
-                return result.ModifiedCount > 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Rezervasyon durumu güncellenirken hata: {ex.Message}");
-            }
+            return await _repository.UpdateBookingStatusAsync(
+                 updateStatusDto.BookingId,
+                 updateStatusDto.Status,
+                 updateStatusDto.Notes);
         }
 
         public async Task<int> GetPendingBookingsCountAsync()
         {
-            try
-            {
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Bookings");
-                var filter = Builders<Booking>.Filter.Eq(x => x.Status, BookingStatus.Pending);
-                var count = await bookingCollection.CountDocumentsAsync(filter);
-                return (int)count;
-            }
-            catch
-            {
-                return 0;
-            }
+            return await _repository.GetPendingBookingsCountAsync();
         }
 
         public async Task<List<ResultBookingDto>> GetBookingsByStatusAsync(BookingStatus status)
         {
-            try
-            {
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Bookings");
-                var filter = Builders<Booking>.Filter.Eq(x => x.Status, status);
-                var sort = Builders<Booking>.Sort.Descending(x => x.CreatedDate);
-
-                var bookings = await bookingCollection
-                    .Find(filter)
-                    .Sort(sort)
-                    .ToListAsync();
-
-                return _mapper.Map<List<ResultBookingDto>>(bookings);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Duruma göre rezervasyonlar yüklenirken hata: {ex.Message}");
-            }
+            var bookings = await _repository.GetByStatusAsync(status);
+            return _mapper.Map<List<ResultBookingDto>>(bookings);
         }
     }
 }

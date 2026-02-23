@@ -13,13 +13,10 @@ namespace JadooTravel.DataAccess.Context
     {
         private readonly IMongoDatabase _database;
 
-        public AppDbContext(IConfiguration configuration)
+        public AppDbContext(IMongoDatabase database)
         {
-            var connectionString = configuration["MongoSettings:ConnectionString"];
-            var databaseName = configuration["MongoSettings:DatabaseName"];
-
-            var client = new MongoClient(connectionString);
-            _database = client.GetDatabase(databaseName);
+            _database = database;
+         
         }
 
         public IMongoCollection<TEntity> GetCollection<TEntity>()

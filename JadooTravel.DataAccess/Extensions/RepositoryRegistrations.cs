@@ -23,7 +23,7 @@ namespace JadooTravel.DataAccess.Extensions
             services.AddScoped<ITripPlanDal, MongoTripPlanDal>();
             services.AddScoped<ICtaDal, MongoCtaDal>();
             services.AddScoped<IPartnerDal, MongoPartnerDal>();
-            services.AddSingleton<AppDbContext>();
+            services.AddScoped<AppDbContext>();
             services.AddScoped(typeof(IGenericDal<>), typeof(MongoGenericDal<>));
         }
     }
