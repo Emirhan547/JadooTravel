@@ -1,12 +1,10 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using JadooTravel.Business.Abstract;
 using JadooTravel.DataAccess.Abstract;
 using JadooTravel.Dto.Dtos.BookingDtos;
 using JadooTravel.Entity.Entities;
 using JadooTravel.Entity.Entities.Enums;
-using MongoDB.Driver;
+
 
 namespace JadooTravel.Business.Concrete
 {

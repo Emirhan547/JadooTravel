@@ -7,16 +7,17 @@ namespace JadooTravel.UI.Middleware
     public class AnalyticsMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IAnalyticsService _analyticsService;
         private readonly string _sessionIdCookieName = "SessionId";
 
-        public AnalyticsMiddleware(RequestDelegate next, IAnalyticsService analyticsService)
+        public AnalyticsMiddleware(RequestDelegate next)
         {
             _next = next;
-            _analyticsService = analyticsService;
         }
 
-        public async Task InvokeAsync(HttpContext context, UserManager<AppUser> userManager)
+        public async Task InvokeAsync(
+            HttpContext context,
+            IAnalyticsService analyticsService,
+            UserManager<AppUser> userManager)
         {
             // Session ID al veya oluştur
             if (!context.Request.Cookies.ContainsKey(_sessionIdCookieName))
@@ -29,13 +30,15 @@ namespace JadooTravel.UI.Middleware
             }
 
             var sessionId = context.Request.Cookies[_sessionIdCookieName];
-            var userId = userManager.GetUserAsync(context.User)?.Result?.Id;
+
+            var user = await userManager.GetUserAsync(context.User);
+            var userId = user?.Id;
+
             var pageUrl = context.Request.Path.Value;
 
-            // Page View'i takip et (sadece GET ve HTML için)
             if (context.Request.Method == "GET" && IsBrowserRequest(context))
             {
-                _ = _analyticsService.TrackPageViewAsync(
+                _ = analyticsService.TrackPageViewAsync(
                     pageUrl,
                     GetPageName(pageUrl),
                     userId,
@@ -60,8 +63,8 @@ namespace JadooTravel.UI.Middleware
                 return "User Profile";
             if (url == "/")
                 return "Home Page";
+
             return url;
         }
     }
-
 }

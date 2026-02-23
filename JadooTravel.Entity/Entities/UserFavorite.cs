@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 
 namespace JadooTravel.Entity.Entities
 {
-    public class UserFavorite
+    public class UserFavorite:BaseEntity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
+      
         [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
 

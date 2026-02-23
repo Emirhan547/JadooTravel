@@ -12,16 +12,15 @@ namespace JadooTravel.UI.Controllers
     {
         private readonly IUserProfileService _userProfileService;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IBookingService _bookingService;
+      
 
         public ProfileController(
             IUserProfileService userProfileService,
-            UserManager<AppUser> userManager,
-            IBookingService bookingService)
+           UserManager<AppUser> userManager)
         {
             _userProfileService = userProfileService;
             _userManager = userManager;
-            _bookingService = bookingService;
+          
         }
 
         [HttpGet]
@@ -32,6 +31,8 @@ namespace JadooTravel.UI.Controllers
                 return RedirectToAction("Login", "Auth");
 
             var profile = await _userProfileService.GetProfileAsync(user.Id);
+            if (profile == null)
+                return RedirectToAction("Login", "Auth");
             return View(profile);
         }
 
@@ -43,7 +44,8 @@ namespace JadooTravel.UI.Controllers
                 return RedirectToAction("Login", "Auth");
 
             var profile = await _userProfileService.GetProfileAsync(user.Id);
-
+            if (profile == null)
+                return RedirectToAction("Login", "Auth");
             var updateDto = new UpdateProfileDto
             {
                 Id = profile.Id,
@@ -107,6 +109,8 @@ namespace JadooTravel.UI.Controllers
             try
             {
                 var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    return RedirectToAction("Login", "Auth");
                 var result = await _userProfileService.ChangePasswordAsync(user.Id, model);
 
                 if (result)

@@ -91,7 +91,7 @@ namespace JadooTravel.Business.Concrete
                     ? (conversions.Count / (double)allPageViews.Count) * 100
                     : 0;
 
-                var last30Days = GetDailyStatsAsync(startDate.Value, endDate.Value).Result;
+                var last30Days = await GetDailyStatsAsync(startDate.Value, endDate.Value);
 
                 return new AnalyticsOverviewDto
                 {
@@ -185,7 +185,7 @@ namespace JadooTravel.Business.Concrete
                 var pageViews = await pageViewCollection.Find(pageViewFilter).ToListAsync();
                 var conversions = await conversionCollection.Find(conversionFilter).ToListAsync();
 
-                var dailyStats = GetDailyStatsAsync(startDate, endDate).Result;
+                var dailyStats = await GetDailyStatsAsync(startDate, endDate);
 
                 return new MonthlyStatsDto
                 {

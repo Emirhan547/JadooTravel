@@ -71,5 +71,9 @@ namespace JadooTravel.DataAccess.Concrete
                 .SortByDescending(x => x.CreatedDate)
                 .ToListAsync();
         }
+        public async Task<long> CountByUserIdAsync(string userId)
+        {
+            return await _bookingCollection.CountDocumentsAsync(x => x.UserId == userId);
+        }
     }
 }

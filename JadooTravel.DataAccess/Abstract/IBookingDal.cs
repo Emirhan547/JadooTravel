@@ -15,5 +15,6 @@ namespace JadooTravel.DataAccess.Abstract
         Task<bool> UpdateBookingStatusAsync(string bookingId, BookingStatus status, string? notes);
         Task<int> GetPendingBookingsCountAsync();
         Task<List<Booking>> GetByStatusAsync(BookingStatus status);
+        Task<long> CountByUserIdAsync(string userId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JadooTravel.Business.Abstract;
+using JadooTravel.DataAccess.Abstract;
 using JadooTravel.Dto.Dtos.UserDtos;
 using JadooTravel.Entity.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -11,191 +12,112 @@ namespace JadooTravel.Business.Concrete
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
-      
-        private readonly IMongoDatabase _mongoDatabase;
+
+        private readonly IBookingDal _bookingDal;
+        private readonly IUserFavoriteDal _userFavoriteDal;
 
         public UserProfileService(
             UserManager<AppUser> userManager,
             IMapper mapper,
-         IMongoDatabase mongoDatabase)
+        IBookingDal bookingDal,
+            IUserFavoriteDal userFavoriteDal)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _mongoDatabase = mongoDatabase;
+            bookingDal = bookingDal;
+            _userFavoriteDal = userFavoriteDal;
         }
 
         public async Task<UserProfileDto> GetProfileAsync(string userId)
         {
-            try
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return null;
+
+            var bookingCount = await _bookingDal.CountByUserIdAsync(userId);
+            var favoriteCount = await _userFavoriteDal.CountByUserIdAsync(userId);
+
+            return new UserProfileDto
             {
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                    return null;
-                var bookingCollection = _mongoDatabase.GetCollection<Booking>("Booking");
-                var bookingFilter = Builders<Booking>.Filter.Eq(x => x.UserId, userId);
-                var bookingCount = await bookingCollection.CountDocumentsAsync(bookingFilter);
-
-                var favoriteCollection = _mongoDatabase.GetCollection<dynamic>("UserFavorites");
-                var favoriteFilter = Builders<dynamic>.Filter.Eq("UserId", userId);
-                var favoriteCount = await favoriteCollection.CountDocumentsAsync(favoriteFilter);
-
-                var profileDto = new UserProfileDto
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    PhoneNumber = user.PhoneNumber,
-                    Address = user.Address ?? "",
-                    City = user.City ?? "",
-                    Country = user.Country ?? "",
-                    ProfileImageUrl = user.ProfileImageUrl ?? "/public/assets/img/default-avatar.png",
-                    CreatedDate = user.Id != null ? DateTime.UtcNow : DateTime.UtcNow,
-                    TotalBookings = (int)bookingCount,
-                    TotalFavorites = (int)favoriteCount
-                };
-
-                return profileDto;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Profil yüklenirken hata oluştu: {ex.Message}");
-            }
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FullName = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address ?? string.Empty,
+                City = user.City ?? string.Empty,
+                Country = user.Country ?? string.Empty,
+                ProfileImageUrl = user.ProfileImageUrl ?? "/public/assets/img/default-avatar.png",
+                CreatedDate = DateTime.UtcNow,
+                TotalBookings = (int)bookingCount,
+                TotalFavorites = (int)favoriteCount
+            };
         }
+        
 
         public async Task<bool> UpdateProfileAsync(UpdateProfileDto updateProfileDto)
         {
-            try
+            var user = await _userManager.FindByIdAsync(updateProfileDto.Id);
+            if (user == null)
+                return false;
+
+            user.FullName = updateProfileDto.FullName ?? user.FullName;
+            user.PhoneNumber = updateProfileDto.PhoneNumber ?? user.PhoneNumber;
+            user.Address = updateProfileDto.Address ?? user.Address;
+            user.City = updateProfileDto.City ?? user.City;
+            user.Country = updateProfileDto.Country ?? user.Country;
+            user.ProfileImageUrl = updateProfileDto.ProfileImageUrl ?? user.ProfileImageUrl;
+
+            if (!string.IsNullOrWhiteSpace(updateProfileDto.Email) && updateProfileDto.Email != user.Email)
             {
-                var user = await _userManager.FindByIdAsync(updateProfileDto.Id);
-                if (user == null)
-                    return false;
-
-                user.FullName = updateProfileDto.FullName ?? user.FullName;
-                user.PhoneNumber = updateProfileDto.PhoneNumber ?? user.PhoneNumber;
-                user.Address = updateProfileDto.Address ?? user.Address;
-                user.City = updateProfileDto.City ?? user.City;
-                user.Country = updateProfileDto.Country ?? user.Country;
-                user.ProfileImageUrl = updateProfileDto.ProfileImageUrl ?? user.ProfileImageUrl;
-
-                // Email değişirse güncelle
-                if (!string.IsNullOrWhiteSpace(updateProfileDto.Email) &&
-                    updateProfileDto.Email != user.Email)
-                {
-                    user.Email = updateProfileDto.Email;
-                    user.UserName = updateProfileDto.Email;
-                }
-
-                var result = await _userManager.UpdateAsync(user);
-                return result.Succeeded;
+                user.Email = updateProfileDto.Email;
+                user.UserName = updateProfileDto.Email;
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Profil güncellenirken hata oluştu: {ex.Message}");
-            }
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
         }
 
         public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto)
         {
-            try
-            {
-                if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
-                    throw new Exception("Yeni şifreler eşleşmiyor");
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
+                throw new Exception("Yeni şifreler eşleşmiyor");
 
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                    return false;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return false;
 
-                var result = await _userManager.ChangePasswordAsync(
-                    user,
-                    changePasswordDto.CurrentPassword,
-                    changePasswordDto.NewPassword
-                );
+            var result = await _userManager.ChangePasswordAsync(
+                 user,
+                 changePasswordDto.CurrentPassword,
+                 changePasswordDto.NewPassword);
 
-                return result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Şifre değiştirilirken hata oluştu: {ex.Message}");
-            }
+            return result.Succeeded;
         }
 
-        public async Task<bool> AddFavoriteAsync(string userId, string destinationId,
-            string cityCountry, string imageUrl, decimal price)
+        public async Task<bool> AddFavoriteAsync(string userId, string destinationId, string cityCountry, string imageUrl, decimal price)
         {
-            try
+            if (await _userFavoriteDal.ExistsAsync(userId, destinationId))
+                return false;
+
+            var favorite = new UserFavorite
             {
-                var favoriteCollection = _mongoDatabase.GetCollection<UserFavorite>("UserFavorites");
+                UserId = userId,
+                DestinationId = destinationId,
+                CityCountry = cityCountry,
+                ImageUrl = imageUrl,
+                Price = price,
+                CreatedDate = DateTime.UtcNow
+            };
 
-                // Zaten favorilere eklenmiş mi kontrol et
-                var filter = Builders<UserFavorite>.Filter.And(
-                    Builders<UserFavorite>.Filter.Eq(x => x.UserId, userId),
-                    Builders<UserFavorite>.Filter.Eq(x => x.DestinationId, destinationId)
-                );
-
-                var existing = await favoriteCollection.FindAsync(filter);
-                if (existing.Any())
-                    return false; // Zaten favori listesinde
-
-                var favorite = new UserFavorite
-                {
-                    UserId = userId,
-                    DestinationId = destinationId,
-                    CityCountry = cityCountry,
-                    ImageUrl = imageUrl,
-                    Price = price,
-                    CreatedDate = DateTime.UtcNow
-                };
-
-                await favoriteCollection.InsertOneAsync(favorite);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Favori eklenirken hata oluştu: {ex.Message}");
-            }
+            await _userFavoriteDal.CreateAsync(favorite);
+            return true;
         }
+        
 
         public async Task<bool> RemoveFavoriteAsync(string userId, string favoriteId)
-        {
-            try
-            {
-                var favoriteCollection = _mongoDatabase.GetCollection<UserFavorite>("UserFavorites");
-
-                var filter = Builders<UserFavorite>.Filter.And(
-                    Builders<UserFavorite>.Filter.Eq(x => x.Id, favoriteId),
-                    Builders<UserFavorite>.Filter.Eq(x => x.UserId, userId)
-                );
-
-                var result = await favoriteCollection.DeleteOneAsync(filter);
-                return result.DeletedCount > 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Favori kaldırılırken hata oluştu: {ex.Message}");
-            }
-        }
+        => await _userFavoriteDal.DeleteByIdAndUserIdAsync(favoriteId, userId);
 
         public async Task<List<UserFavoriteDto>> GetFavoritesAsync(string userId)
-        {
-            try
-            {
-                var favoriteCollection = _mongoDatabase.GetCollection<UserFavorite>("UserFavorites");
-
-                var filter = Builders<UserFavorite>.Filter.Eq(x => x.UserId, userId);
-                var sort = Builders<UserFavorite>.Sort.Descending(x => x.CreatedDate);
-
-                var favorites = await favoriteCollection
-                    .Find(filter)
-                    .Sort(sort)
-                    .ToListAsync();
-
-                return _mapper.Map<List<UserFavoriteDto>>(favorites);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Favoriler yüklenirken hata oluştu: {ex.Message}");
-            }
-        }
+         => _mapper.Map<List<UserFavoriteDto>>(await _userFavoriteDal.GetByUserIdAsync(userId));
     }
 }

@@ -25,6 +25,8 @@ namespace JadooTravel.DataAccess.Extensions
             services.AddScoped<IPartnerDal, MongoPartnerDal>();
             services.AddScoped<AppDbContext>();
             services.AddScoped(typeof(IGenericDal<>), typeof(MongoGenericDal<>));
+            services.AddScoped<IReviewDal, MongoReviewDal>();
+            services.AddScoped<IUserFavoriteDal, MongoUserFavoriteDal>();
         }
     }
 }
