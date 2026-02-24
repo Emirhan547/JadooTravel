@@ -1,5 +1,11 @@
 ﻿@model List<ResultTripPlanDto>
 
+@using JadooTravel.Dto.Dtos.DestinationDtos
+
+@{
+    var destinations = (ViewBag.Destinations as List<ResultDestinationDto>) ?? new List<ResultDestinationDto>();
+}
+
 <section id="booking">
     <div class="container">
         <div class="row align-items-center">
@@ -36,7 +42,9 @@
                         <h5 class="mb-0">Booking Form</h5>
                     </div>
                     <div class="card-body">
-                        <form method="post"asp-controller="Booking"asp-action="CreateBooking">
+  
+                        <form method="post" asp-controller="Booking" asp-action="CreateBooking" id="bookingForm">
+                            @Html.AntiForgeryToken()
                             <div class="mb-3">
                                 <input type="text"
                                        name="FullName"
@@ -62,6 +70,56 @@
                             </div>
 
                             <div class="mb-3">
+                                <select name="DestinationId" id="destinationSelect" class="form-select" required>
+                                    <option value="">Destination Select</option>
+                                    @foreach (var destination in destinations)
+                                    {
+                                        <option value="@destination.Id" data-price="@destination.Price">@destination.CityCountry (@destination.Price.ToString("C0"))</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <input type="date"
+                                           name="StartDate"
+                                           id="startDate"
+                                           class="form-control"
+                                           required />
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="date"
+                                           name="EndDate"
+                                           id="endDate"
+                                           class="form-control"
+                                           required />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="number"
+                                       name="PersonCount"
+                                       id="personCount"
+                                       class="form-control"
+                                       placeholder="Person Count"
+                                       min="1"
+                                       value="1"
+                                       required />
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="number"
+                                       name="TotalPrice"
+                                       id="totalPrice"
+                                       class="form-control"
+                                       placeholder="Total Price"
+                                       min="0"
+                                       step="0.01"
+                                       readonly
+                                       required />
+                            </div>
+
+                            <div class="mb-3">
                                 <textarea rows="3"
                                           name="MessageBody"
                                           class="form-control"
@@ -81,3 +139,52 @@
         </div>
     </div>
 </section>
+
+<script>
+    (function () {
+        const destinationSelect = document.getElementById('destinationSelect');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+        const personCount = document.getElementById('personCount');
+        const totalPrice = document.getElementById('totalPrice');
+
+        if (!destinationSelect || !startDate || !endDate || !personCount || !totalPrice) return;
+
+        const today = new Date().toISOString().split('T')[0];
+        startDate.min = today;
+        endDate.min = today;
+
+        function calculateTotalPrice() {
+            const selectedOption = destinationSelect.options[destinationSelect.selectedIndex];
+            const pricePerPersonPerDay = Number(selectedOption?.dataset?.price || 0);
+            const people = Number(personCount.value || 0);
+
+            const start = startDate.value ? new Date(startDate.value) : null;
+            const end = endDate.value ? new Date(endDate.value) : null;
+
+            let dayCount = 0;
+            if (start && end && end >= start) {
+                const diffTime = end.getTime() - start.getTime();
+                dayCount = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            }
+
+            const total = pricePerPersonPerDay * people * dayCount;
+            totalPrice.value = total > 0 ? total.toFixed(2) : '';
+        }
+
+        function onStartDateChange() {
+            if (startDate.value) {
+                endDate.min = startDate.value;
+                if (endDate.value && endDate.value < startDate.value) {
+                    endDate.value = startDate.value;
+                }
+            }
+            calculateTotalPrice();
+        }
+
+        destinationSelect.addEventListener('change', calculateTotalPrice);
+        startDate.addEventListener('change', onStartDateChange);
+        endDate.addEventListener('change', calculateTotalPrice);
+        personCount.addEventListener('input', calculateTotalPrice);
+    })();
+</script>

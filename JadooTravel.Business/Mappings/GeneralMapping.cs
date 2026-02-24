@@ -24,7 +24,7 @@ namespace JadooTravel.Business.Mappings
             CreateMap<ResultBookingDto,Booking>().ReverseMap();
             CreateMap<CreateBookingDto,Booking>().ReverseMap();
             CreateMap<UpdateBookingDto,Booking>().ReverseMap();
-
+            CreateMap<Booking, UserBookingDto>();
             CreateMap<ResultCategoryDto, Category>().ReverseMap();
             CreateMap<CreateCategoryDto, Category>().ReverseMap();
             CreateMap<UpdateCategoryDto, Category>().ReverseMap();
@@ -53,6 +53,7 @@ namespace JadooTravel.Business.Mappings
             CreateMap<ChatMessage, ChatMessageResponseDto>().ReverseMap();
             CreateMap<ChatMessage, ChatHistoryDto>().ReverseMap();
             CreateMap<FAQ, FAQDto>().ReverseMap();
+         
         }
     }
 }

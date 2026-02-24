@@ -26,34 +26,27 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateStatus(string id, BookingStatus status, string notes)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveBooking(string id)
         {
-            try
-            {
-                var updateDto = new UpdateBookingStatusDto
-                {
-                    BookingId = id,
-                    Status = status,
-                    Notes = notes
-                };
-
-                var result = await _bookingService.UpdateBookingStatusAsync(updateDto);
-
-                if (result)
-                    return Json(new { success = true, message = "Durumu güncellendi" });
-                else
-                    return Json(new { success = false, message = "Güncellenemedi" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+            await SetStatusAsync(id, BookingStatus.Approved, "Rezervasyon admin tarafından onaylandı.");
+            return RedirectToAction(nameof(BookingList));
         }
 
-        public async Task<IActionResult> DeleteBooking(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectBooking(string id, string notes)
         {
-            await _bookingService.DeleteAsync(id);
-            return RedirectToAction("BookingList");
+            await SetStatusAsync(id, BookingStatus.Rejected, string.IsNullOrWhiteSpace(notes) ? "Rezervasyon admin tarafından reddedildi." : notes);
+            return RedirectToAction(nameof(BookingList));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPassive(string id, string notes)
+        {
+            await SetStatusAsync(id, BookingStatus.Cancelled, string.IsNullOrWhiteSpace(notes) ? "Rezervasyon pasife çekildi." : notes);
+            return RedirectToAction(nameof(BookingList));
         }
 
         [HttpGet]
@@ -67,7 +60,19 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         public async Task<IActionResult> PendingBookings()
         {
             var bookings = await _bookingService.GetBookingsByStatusAsync(BookingStatus.Pending);
-            return View(bookings);
+            return View("BookingList", bookings);
+        }
+
+        private async Task SetStatusAsync(string id, BookingStatus status, string notes)
+        {
+            var updateDto = new UpdateBookingStatusDto
+            {
+                BookingId = id,
+                Status = status,
+                Notes = notes
+            };
+
+            await _bookingService.UpdateBookingStatusAsync(updateDto);
         }
     }
 }

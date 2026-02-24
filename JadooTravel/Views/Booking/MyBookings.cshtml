@@ -1,0 +1,98 @@
+﻿@model List<JadooTravel.Dto.Dtos.BookingDtos.UserBookingDto>
+
+@{
+    ViewData["Title"] = "Rezervasyonlarım";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<section class="pt-8 pb-6" style="margin-top: 80px;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Rezervasyonlarım</h2>
+            <a href="/Default/Index" class="btn btn-outline-primary">Yeni Rezervasyon</a>
+        </div>
+
+        @if (TempData["success"] != null)
+        {
+            <div class="alert alert-success">@TempData["success"]</div>
+        }
+
+        @if (TempData["error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["error"]</div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info">Henüz bir rezervasyonunuz bulunmuyor.</div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var booking in Model)
+                {
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 border-0">
+                            <img src="@(string.IsNullOrWhiteSpace(booking.DestinationImageUrl) ? "/public/assets/img/dest/placeholder.jpg" : booking.DestinationImageUrl)"
+                                 class="card-img-top" style="height: 200px; object-fit: cover;"
+                                 alt="@booking.DestinationCityCountry" />
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">@booking.DestinationCityCountry</h5>
+                                    <span class="badge bg-@booking.StatusColor">@booking.StatusDisplay</span>
+                                </div>
+                                <p class="text-muted mb-2">Rezervasyon Tarihi: @booking.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item px-0"><strong>Kişi Sayısı:</strong> @booking.PersonCount</li>
+                                    <li class="list-group-item px-0"><strong>Başlangıç:</strong> @booking.StartDate.ToString("dd.MM.yyyy")</li>
+                                    <li class="list-group-item px-0"><strong>Bitiş:</strong> @booking.EndDate.ToString("dd.MM.yyyy")</li>
+                                    <li class="list-group-item px-0"><strong>Toplam Tutar:</strong> @booking.TotalPrice.ToString("C")</li>
+                                </ul>
+
+                                @if (booking.Status == JadooTravel.Entity.Entities.Enums.BookingStatus.Pending)
+                                {
+                                    <button type="button" class="btn btn-outline-danger btn-sm cancel-booking-btn" data-booking-id="@booking.Id">
+                                        Rezervasyonu İptal Et
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.cancel-booking-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const bookingId = this.getAttribute('data-booking-id');
+                if (!confirm('Rezervasyonu iptal etmek istediğinize emin misiniz?')) return;
+
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                const token = tokenInput ? tokenInput.value : '';
+
+                const response = await fetch('/Booking/CancelBooking?id=' + bookingId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message || 'İşlem başarısız.');
+                }
+            });
+        });
+    </script>
+
+    <form style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+}

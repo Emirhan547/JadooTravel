@@ -12,7 +12,7 @@ namespace JadooTravel.DataAccess.Concrete
 
         public MongoReviewDal(AppDbContext context, IMongoDatabase mongoDatabase) : base(context)
         {
-            _reviewCollection = mongoDatabase.GetCollection<DestinationReview>("DestinationReviews");
+            _reviewCollection = context.GetCollection<DestinationReview>();
         }
 
         public async Task<List<DestinationReview>> GetByDestinationAsync(string destinationId, bool onlyApproved = false)

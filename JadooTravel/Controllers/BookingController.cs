@@ -12,12 +12,14 @@ namespace JadooTravel.UI.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly UserManager<AppUser> _userManager;
-
+        private readonly IDestinationService _destinationService;
         public BookingController(
+             IDestinationService destinationService,
             IBookingService bookingService,
             UserManager<AppUser> userManager)
         {
             _bookingService = bookingService;
+            _destinationService = destinationService;
             _userManager = userManager;
         }
 
@@ -30,12 +32,20 @@ namespace JadooTravel.UI.Controllers
                 if (user == null)
                     return RedirectToAction("Login", "Auth");
 
-                // Kullanıcı ID'sini ekle
-                // Hizmet katmanında işlenecek
+                var destination = await _destinationService.GetByIdAsync(createBookingDto.DestinationId);
+                if (destination == null)
+                {
+                    TempData["error"] = "Seçilen destinasyon bulunamadı.";
+                    return RedirectToAction("Index", "Default");
+                }
+
+                createBookingDto.UserId = user.Id;
+                createBookingDto.DestinationCityCountry = destination.CityCountry;
+                createBookingDto.DestinationImageUrl = destination.ImageUrl;
                 await _bookingService.CreateAsync(createBookingDto);
 
                 TempData["success"] = "Rezervasyonunuz başarıyla oluşturuldu. Kısa sürede size email gönderilecektir.";
-                return RedirectToAction("Index", "Default");
+                return RedirectToAction("MyBookings");
             }
             catch (Exception ex)
             {
@@ -89,6 +99,7 @@ namespace JadooTravel.UI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(string id)
         {
             var user = await _userManager.GetUserAsync(User);

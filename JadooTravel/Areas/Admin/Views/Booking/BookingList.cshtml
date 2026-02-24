@@ -1,5 +1,6 @@
-﻿@using JadooTravel.Entity.Entities.Enums
+﻿
 
+@using JadooTravel.Entity.Entities.Enums
 @model List<ResultBookingDto>
 
 @{
@@ -36,9 +37,8 @@
                             <h3>@Model.Count(x => x.Status == BookingStatus.Pending)</h3>
                             <p>Beklemede</p>
                         </div>
-                        <div class="icon">
-                            <i class="fa fa-clock"></i>
-                        </div>
+                        
+                        <div class="icon"><i class="fa fa-clock"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -47,9 +47,8 @@
                             <h3>@Model.Count(x => x.Status == BookingStatus.Approved)</h3>
                             <p>Onaylandı</p>
                         </div>
-                        <div class="icon">
-                            <i class="fa fa-check"></i>
-                        </div>
+                        
+                        <div class="icon"><i class="fa fa-check"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -58,20 +57,18 @@
                             <h3>@Model.Count(x => x.Status == BookingStatus.Rejected)</h3>
                             <p>Reddedildi</p>
                         </div>
-                        <div class="icon">
-                            <i class="fa fa-times"></i>
-                        </div>
+                      
+                        <div class="icon"><i class="fa fa-times"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="small-box bg-danger">
                         <div class="inner">
                             <h3>@Model.Count(x => x.Status == BookingStatus.Cancelled)</h3>
-                            <p>İptal</p>
+                          
+                            <p>Pasif / İptal</p>
                         </div>
-                        <div class="icon">
-                            <i class="fa fa-ban"></i>
-                        </div>
+                        <div class="icon"><i class="fa fa-ban"></i></div>
                     </div>
                 </div>
             </div>
@@ -89,7 +86,8 @@
                                 <th>Kişi Sayısı</th>
                                 <th>Toplam Fiyat</th>
                                 <th style="width:120px">Durumu</th>
-                                <th style="width:200px">İşlemler</th>
+                            
+                                <th style="width:300px">İşlemler</th>
                             </tr>
                         </thead>
 
@@ -101,24 +99,13 @@
                                     count++;
                                     <tr>
                                         <td>@count</td>
-                                        <td>
-                                            <strong>@item.FullName</strong>
-                                        </td>
-                                        <td>
-                                            <a href="mailto:@item.Email">@item.Email</a>
-                                        </td>
-                                        <td>
-                                            <a href="tel:@item.Phone">@item.Phone</a>
-                                        </td>
-                                        <td>
-                                            @item.CreatedDate.ToString("dd.MM.yyyy HH:mm")
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-primary">@item.PersonCount</span>
-                                        </td>
-                                        <td>
-                                            <strong>@item.TotalPrice.ToString("C")</strong>
-                                        </td>
+                                        
+                                        <td><strong>@item.FullName</strong></td>
+                                        <td><a href="mailto:@item.Email">@item.Email</a></td>
+                                        <td><a href="tel:@item.Phone">@item.Phone</a></td>
+                                        <td>@item.CreatedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td><span class="badge badge-primary">@item.PersonCount</span></td>
+                                        <td><strong>@item.TotalPrice.ToString("C")</strong></td>
                                         <td>
                                             @if (item.Status == BookingStatus.Pending)
                                             {
@@ -132,35 +119,53 @@
                                             {
                                                 <span class="badge badge-danger">Reddedildi</span>
                                             }
-                                            else if (item.Status == BookingStatus.Cancelled)
+                                       
+                                                                        else
+                                    {
+                                 
+                                    <span class="badge badge-secondary">Pasif / İptal</span>
+                                    }
+                                </td>
+                               
+                                <td class="d-flex flex-wrap gap-1">
+                                    <a href="/Admin/Booking/BookingDetails/@item.Id" class="btn btn-info btn-sm">
+                                        <i class="fa fa-eye"></i> Gör
+                                    </a>
+
+                                    @if (item.Status == BookingStatus.Pending)
+                                                    {
+                                                        
+                                                        <form method="post" asp-action="ApproveBooking" asp-controller="Booking" asp-area="Admin" class="d-inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <button type="submit" class="btn btn-success btn-sm">
+                                                                <i class="fa fa-check"></i> Onayla
+                                                            </button>
+                                                        </form>
+
+                                                        <form method="post" asp-action="RejectBooking" asp-controller="Booking" asp-area="Admin" class="d-inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <input type="hidden" name="notes" value="Rezervasyon admin tarafından reddedildi." />
+                                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                                <i class="fa fa-times"></i> Reddet
+                                                            </button>
+                                                        </form>
+                                                    }
+
+                                           
+                                            @if (item.Status != BookingStatus.Cancelled)
                                             {
-                                                <span class="badge badge-secondary">İptal</span>
+                                                <form method="post" asp-action="SetPassive" asp-controller="Booking" asp-area="Admin" class="d-inline"
+                                                      onsubmit="return confirm('Bu rezervasyonu pasife çekmek istediğinize emin misiniz?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="notes" value="Rezervasyon admin tarafından pasife çekildi." />
+                                                    <button type="submit" class="btn btn-secondary btn-sm">
+                                                        <i class="fa fa-ban"></i> Pasife Çek
+                                                    </button>
+                                                </form>
                                             }
-                                        </td>
-                                        <td>
-                                            <a href="/Admin/Booking/BookingDetails/@item.Id"
-                                               class="btn btn-info btn-sm">
-                                                <i class="fa fa-eye"></i> Gör
-                                            </a>
-
-                                            @if (item.Status == BookingStatus.Pending)
-                                            {
-                                                <button class="btn btn-success btn-sm approve-btn"
-                                                        data-booking-id="@item.Id">
-                                                    <i class="fa fa-check"></i> Onayla
-                                                </button>
-
-                                                <button class="btn btn-warning btn-sm reject-btn"
-                                                        data-booking-id="@item.Id">
-                                                    <i class="fa fa-times"></i> Reddet
-                                                </button>
-                                            }
-
-                                            <a href="/Admin/Booking/DeleteBooking/@item.Id"
-                                               class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Bu rezervasyonu silmek istediğinize emin misiniz?')">
-                                                <i class="fa fa-trash"></i> Sil
-                                            </a>
                                         </td>
                                     </tr>
                                 }
@@ -168,9 +173,8 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="9" class="text-center text-muted p-4">
-                                        Kayıtlı rezervasyon bulunamadı.
-                                    </td>
+                                    
+                                    <td colspan="9" class="text-center text-muted p-4">Kayıtlı rezervasyon bulunamadı.</td>
                                 </tr>
                             }
                         </tbody>
@@ -181,84 +185,3 @@
     </div>
 </div>
 
-<!-- Status Update Modal -->
-<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="statusModalLabel">Durumu Güncelle</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="bookingIdInput" />
-                <div class="form-group">
-                    <label for="statusSelect">Durum:</label>
-                    <select class="form-control" id="statusSelect">
-                        <option value="1">Onaylandı</option>
-                        <option value="2">Reddedildi</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="notesTextarea">Notlar:</label>
-                    <textarea class="form-control" id="notesTextarea" rows="4"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
-                <button type="button" class="btn btn-primary" id="saveStatusBtn">Kaydet</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        // Approve button
-        document.querySelectorAll('.approve-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const bookingId = this.getAttribute('data-booking-id');
-                updateStatus(bookingId, 1, 'Rezervasyon onaylandı');
-            });
-        });
-
-        // Reject button
-        document.querySelectorAll('.reject-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const bookingId = this.getAttribute('data-booking-id');
-                document.getElementById('bookingIdInput').value = bookingId;
-                document.getElementById('statusSelect').value = '2';
-                document.getElementById('notesTextarea').value = '';
-                $('#statusModal').modal('show');
-            });
-        });
-
-        // Save status button
-        document.getElementById('saveStatusBtn').addEventListener('click', function() {
-            const bookingId = document.getElementById('bookingIdInput').value;
-            const status = document.getElementById('statusSelect').value;
-            const notes = document.getElementById('notesTextarea').value;
-
-            updateStatus(bookingId, parseInt(status), notes);
-            $('#statusModal').modal('hide');
-        });
-
-        function updateStatus(bookingId, status, notes) {
-            $.post('/Admin/Booking/UpdateStatus', {
-                id: bookingId,
-                status: status,
-                notes: notes
-            }, function(data) {
-                if (data.success) {
-                    toastr.success(data.message);
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    toastr.error(data.message);
-                }
-            });
-        }
-    </script>
-}
