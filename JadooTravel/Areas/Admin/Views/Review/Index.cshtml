@@ -1,0 +1,94 @@
+﻿@model JadooTravel.UI.Areas.Admin.Models.AdminReviewListViewModel
+@{
+    ViewData["Title"] = "Yorum Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-3">
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Toplam</h6><h4>@Model.Stats.TotalReviews</h4></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Onaylı</h6><h4 class="text-success">@Model.Stats.ApprovedReviews</h4></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Bekleyen</h6><h4 class="text-warning">@Model.Stats.PendingReviews</h4></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Ortalama Puan</h6><h4>@Model.Stats.AverageRating</h4></div></div></div>
+</div>
+
+<div class="card card-outline card-primary">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fa fa-comments mr-1"></i> Tüm Yorumlar</h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Puan</th>
+                    <th>Başlık</th>
+                    <th>Yorum</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
+                    <th style="width:160px">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Reviews.Any())
+                {
+                    foreach (var review in Model.Reviews)
+                    {
+                        <tr>
+                            <td>@review.UserName</td>
+                            <td>@review.Rating/5</td>
+                            <td>@review.Title</td>
+                            <td>@review.Comment</td>
+                            <td>
+                                @if (review.IsApproved)
+                                {
+                                    <span class="badge bg-success">Onaylı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Bekliyor</span>
+                                }
+                            </td>
+                            <td>@review.CreatedDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                @if (!review.IsApproved)
+                                {
+                                    <button class="btn btn-success btn-sm approve-btn" data-review-id="@review.Id">Onayla</button>
+                                }
+                                <button class="btn btn-danger btn-sm delete-btn" data-review-id="@review.Id">Sil</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center p-3">Yorum bulunamadı.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            const data = new FormData();
+            data.append('reviewId', this.dataset.reviewId);
+            const response = await fetch('/Admin/Review/ApproveReview', { method: 'POST', body: data });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) location.reload();
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            if (!confirm('Yorum silinsin mi?')) return;
+            const data = new FormData();
+            data.append('reviewId', this.dataset.reviewId);
+            const response = await fetch('/Admin/Review/DeleteReview', { method: 'POST', body: data });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) location.reload();
+        });
+    });
+</script>

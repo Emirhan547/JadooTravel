@@ -1,6 +1,7 @@
 ﻿using JadooTravel.DataAccess.Abstract;
 using JadooTravel.DataAccess.Context;
 using JadooTravel.Entity.Entities;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace JadooTravel.DataAccess.Concrete
@@ -77,15 +78,8 @@ namespace JadooTravel.DataAccess.Concrete
             await _reviewCollection.UpdateOneAsync(x => x.Id == reviewId, update);
         }
 
-        public async Task ApproveAsync(string reviewId, bool approve, string? adminNotes)
-        {
-            var update = Builders<DestinationReview>.Update
-                .Set(x => x.IsApproved, approve)
-                .Set(x => x.ApprovedDate, approve ? DateTime.UtcNow : null)
-                .Set(x => x.AdminNotes, adminNotes);
 
-            await _reviewCollection.UpdateOneAsync(x => x.Id == reviewId, update);
-        }
+        public async Task ApproveAsync(string reviewId, bool approve, string? adminNotes) { var update = Builders<DestinationReview>.Update.Set(x => x.IsApproved, approve).Set(x => x.ApprovedDate, approve ? DateTime.UtcNow : null).Set(x => x.AdminNotes, adminNotes); await _reviewCollection.UpdateOneAsync(x => x.Id == reviewId, update); }
 
         public async Task RejectAsync(string reviewId, string reason)
         {

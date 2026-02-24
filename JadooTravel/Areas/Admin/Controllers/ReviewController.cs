@@ -1,5 +1,6 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.ReviewDtos;
+using JadooTravel.UI.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,15 +23,33 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             try
             {
                 var stats = await _reviewService.GetReviewStatsAsync();
-                return View(stats);
+                var reviews = await _reviewService.GetAllReviewsAsync();
+
+                return View(new AdminReviewListViewModel
+                {
+                    Stats = stats,
+                    Reviews = reviews
+                });
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
-                return View(new ReviewStatsDto());
+                return View(new AdminReviewListViewModel());
             }
         }
-
+        [HttpPost]
+        public async Task<IActionResult> DeleteReview(string reviewId)
+        {
+            try
+            {
+                await _reviewService.DeleteAsync(reviewId);
+                return Json(new { success = true, message = "Yorum silindi" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> PendingReviews()
         {

@@ -20,6 +20,7 @@ namespace JadooTravel.Business.Abstract
         Task<ReviewStatsDto> GetReviewStatsAsync();
 
         // Admin İşlemleri
+        Task<List<ResultReviewDto>> GetAllReviewsAsync();
         Task<List<ResultReviewDto>> GetPendingReviewsAsync();
         Task ApproveReviewAsync(ApproveReviewDto approveDto);
         Task RejectReviewAsync(string reviewId, string reason);

@@ -10,11 +10,8 @@ namespace JadooTravel.Entity.Entities
 {
     public class DestinationReview:BaseEntity
     {
-   
-
         [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
-
         [BsonRepresentation(BsonType.ObjectId)]
         public string DestinationId { get; set; }
 

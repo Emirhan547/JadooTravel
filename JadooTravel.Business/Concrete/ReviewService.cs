@@ -67,7 +67,16 @@ namespace JadooTravel.Business.Concrete
 
             await _reviewDal.UpdateAsync(review);
         }
+        public async Task<List<ResultReviewDto>> GetAllReviewsAsync()
+        {
+            var reviews = await _reviewDal.GetAllAsync();
+            var activeReviews = reviews
+                .Where(x => !x.IsDeleted)
+                .OrderByDescending(x => x.CreatedDate)
+                .ToList();
 
+            return _mapper.Map<List<ResultReviewDto>>(activeReviews);
+        }
         public async Task DeleteAsync(string reviewId) => await _reviewDal.SoftDeleteAsync(reviewId);
 
         public async Task<ResultReviewDto> GetByIdAsync(string reviewId)
