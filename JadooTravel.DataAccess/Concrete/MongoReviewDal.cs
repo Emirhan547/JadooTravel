@@ -58,20 +58,6 @@ namespace JadooTravel.DataAccess.Concrete
                 .ToListAsync();
         }
 
-        public async Task<List<DestinationReview>> GetByDestinationAndRatingAsync(string destinationId, int rating)
-        {
-            var filter = Builders<DestinationReview>.Filter.And(
-                Builders<DestinationReview>.Filter.Eq(x => x.DestinationId, destinationId),
-                Builders<DestinationReview>.Filter.Eq(x => x.Rating, rating),
-                Builders<DestinationReview>.Filter.Eq(x => x.IsApproved, true),
-                Builders<DestinationReview>.Filter.Eq(x => x.IsDeleted, false));
-
-            return await _reviewCollection
-                .Find(filter)
-                .SortByDescending(x => x.HelpfulCount)
-                .ToListAsync();
-        }
-
         public async Task SoftDeleteAsync(string reviewId)
         {
             var update = Builders<DestinationReview>.Update.Set(x => x.IsDeleted, true);

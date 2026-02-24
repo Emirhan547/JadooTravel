@@ -35,12 +35,7 @@ namespace JadooTravel.DataAccess.Extensions
                         .Ascending(x => x.DestinationId),
                     new CreateIndexOptions { Unique = true }));
 
-            var chatCollection = database.GetCollection<ChatMessage>("ChatMessages");
-            await chatCollection.Indexes.CreateOneAsync(
-                new CreateIndexModel<ChatMessage>(
-                    Builders<ChatMessage>.IndexKeys.Ascending(x => x.UserId).Descending(x => x.CreatedDate)));
-
-            
+           
         }
     }
 }

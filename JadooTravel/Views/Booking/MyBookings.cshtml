@@ -39,7 +39,18 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h5 class="card-title mb-0">@booking.DestinationCityCountry</h5>
-                                    <span class="badge bg-@booking.StatusColor">@booking.StatusDisplay</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button type="button"
+                                                class="btn btn-link p-0 favorite-toggle"
+                                                data-destination-id="@booking.DestinationId"
+                                                data-city-country="@booking.DestinationCityCountry"
+                                                data-image-url="@booking.DestinationImageUrl"
+                                                data-price="@booking.TotalPrice"
+                                                aria-label="Favori">
+                                            <i class="@(booking.IsFavorite ? "fas" : "far") fa-heart fs-4 @(booking.IsFavorite ? "text-danger" : "text-secondary")"></i>
+                                        </button>
+                                        <span class="badge bg-@booking.StatusColor">@booking.StatusDisplay</span>
+                                    </div>
                                 </div>
                                 <p class="text-muted mb-2">Rezervasyon Tarihi: @booking.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
                                 <ul class="list-group list-group-flush mb-3">
@@ -87,6 +98,43 @@
                     location.reload();
                 } else {
                     alert(result.message || 'İşlem başarısız.');
+                }
+            });
+        });
+        document.querySelectorAll('.favorite-toggle').forEach(button => {
+            button.addEventListener('click', async function () {
+                const icon = this.querySelector('i');
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                const token = tokenInput ? tokenInput.value : '';
+
+                const body = new URLSearchParams({
+                    destinationId: this.dataset.destinationId,
+                    cityCountry: this.dataset.cityCountry,
+                    imageUrl: this.dataset.imageUrl,
+                    price: this.dataset.price
+                });
+
+                const response = await fetch('/Profile/ToggleFavorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body
+                });
+
+                const result = await response.json();
+                if (!result.success) {
+                    alert(result.message || 'Favori işlemi başarısız.');
+                    return;
+                }
+
+                if (result.isFavorite) {
+                    icon.classList.remove('far', 'text-secondary');
+                    icon.classList.add('fas', 'text-danger');
+                } else {
+                    icon.classList.remove('fas', 'text-danger');
+                    icon.classList.add('far', 'text-secondary');
                 }
             });
         });

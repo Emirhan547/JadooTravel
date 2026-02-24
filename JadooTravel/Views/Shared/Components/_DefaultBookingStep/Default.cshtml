@@ -11,9 +11,9 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="mb-4 text-start">
-                    <h5 class="text-secondary">Easy and Fast</h5>
+                    <h5 class="text-secondary">Kolay ve Hızlı</h5>
                     <h3 class="fs-xl-10 fs-lg-8 fs-7 fw-bold font-cursive text-capitalize">
-                        Book your next trip in @Model.Count easy steps
+                        Bir Sonraki Seyahatinizi @Model.Count Kolay Adımda Planlayın
                     </h3>
                 </div>
 
@@ -26,7 +26,7 @@
                     var item = Model[i];
                     <div class="d-flex align-items-start mb-5">
                         <div class="bg-@colors[i % colors.Length] me-sm-4 me-3 p-3" style="border-radius: 13px">
-                            <img src="@item.IconUrl" width="22" alt="@item.Title" />
+                            <i class="@item.IconUrl text-white" style="font-size: 20px;"></i>
                         </div>
                         <div class="flex-1">
                             <h5 class="text-secondary fw-bold fs-0">@item.Title</h5>
@@ -39,7 +39,7 @@
             <div class="col-lg-6 d-flex justify-content-center align-items-start">
                 <div class="card shadow-lg border-info" style="width: 100%; max-width: 500px;">
                     <div class="card-header bg-info text-white text-center">
-                        <h5 class="mb-0">Booking Form</h5>
+                        <h5 class="mb-0">Rezervasyon Formu</h5>
                     </div>
                     <div class="card-body">
   
@@ -101,7 +101,7 @@
                                        name="PersonCount"
                                        id="personCount"
                                        class="form-control"
-                                       placeholder="Person Count"
+                                       placeholder="Kişi Sayısı"
                                        min="1"
                                        value="1"
                                        required />
@@ -112,7 +112,7 @@
                                        name="TotalPrice"
                                        id="totalPrice"
                                        class="form-control"
-                                       placeholder="Total Price"
+                                       placeholder="Toplam Fiyat"
                                        min="0"
                                        step="0.01"
                                        readonly
@@ -123,12 +123,12 @@
                                 <textarea rows="3"
                                           name="MessageBody"
                                           class="form-control"
-                                          placeholder="Message"></textarea>
+                                          placeholder="Mesajınız"></textarea>
                             </div>
 
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-info">
-                                    Book Now
+                                    Rezervasyon Yap
                                 </button>
                             </div>
                         </form>

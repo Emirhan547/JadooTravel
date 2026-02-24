@@ -13,14 +13,17 @@ namespace JadooTravel.UI.Controllers
         private readonly IBookingService _bookingService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IDestinationService _destinationService;
+        private readonly IUserProfileService _userProfileService;
         public BookingController(
              IDestinationService destinationService,
             IBookingService bookingService,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            IUserProfileService userProfileService)
         {
             _bookingService = bookingService;
             _destinationService = destinationService;
             _userManager = userManager;
+            _userProfileService = userProfileService;
         }
 
         [HttpPost]
@@ -65,6 +68,11 @@ namespace JadooTravel.UI.Controllers
             {
                 // Kullanıcıya ait rezervasyonları getir
                 var bookings = await _bookingService.GetUserBookingsAsync(user.Id);
+                var favorites = await _userProfileService.GetFavoritesAsync(user.Id);
+                var favoriteDestinationIds = favorites.Select(x => x.DestinationId).ToHashSet();
+
+                foreach (var booking in bookings)
+                    booking.IsFavorite = favoriteDestinationIds.Contains(booking.DestinationId);
                 return View(bookings);
             }
             catch (Exception ex)

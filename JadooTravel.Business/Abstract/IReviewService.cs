@@ -25,7 +25,6 @@ namespace JadooTravel.Business.Abstract
         // Helpful Count
         Task MarkHelpfulAsync(string reviewId);
 
-        // Rating'e göre ara
-        Task<List<ResultReviewDto>> GetReviewsByRatingAsync(string destinationId, int rating);
+
     }
 }

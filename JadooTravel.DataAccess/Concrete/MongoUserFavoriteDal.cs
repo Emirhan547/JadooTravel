@@ -45,5 +45,14 @@ namespace JadooTravel.DataAccess.Concrete
                 .SortByDescending(x => x.CreatedDate)
                 .ToListAsync();
         }
+        public async Task<bool> DeleteByUserIdAndDestinationIdAsync(string userId, string destinationId)
+        {
+            var filter = Builders<UserFavorite>.Filter.And(
+                Builders<UserFavorite>.Filter.Eq(x => x.UserId, userId),
+                Builders<UserFavorite>.Filter.Eq(x => x.DestinationId, destinationId));
+
+            var result = await _favoriteCollection.DeleteOneAsync(filter);
+            return result.DeletedCount > 0;
+        }
     }
 }

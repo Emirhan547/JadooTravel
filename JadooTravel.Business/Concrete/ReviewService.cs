@@ -157,7 +157,6 @@ namespace JadooTravel.Business.Concrete
         public async Task MarkHelpfulAsync(string reviewId)
         => await _reviewDal.MarkHelpfulAsync(reviewId);
 
-        public async Task<List<ResultReviewDto>> GetReviewsByRatingAsync(string destinationId, int rating)
-       => _mapper.Map<List<ResultReviewDto>>(await _reviewDal.GetByDestinationAndRatingAsync(destinationId, rating));
+      
     }
 }

@@ -7,7 +7,6 @@ namespace JadooTravel.DataAccess.Abstract
         Task<List<DestinationReview>> GetByDestinationAsync(string destinationId, bool onlyApproved = false);
         Task<List<DestinationReview>> GetByUserAsync(string userId);
         Task<List<DestinationReview>> GetPendingAsync();
-        Task<List<DestinationReview>> GetByDestinationAndRatingAsync(string destinationId, int rating);
         Task SoftDeleteAsync(string reviewId);
         Task ApproveAsync(string reviewId, bool approve, string? adminNotes);
         Task RejectAsync(string reviewId, string reason);

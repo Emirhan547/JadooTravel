@@ -12,6 +12,8 @@ namespace JadooTravel.Dto.Dtos.BookingDtos
         public string Id { get; set; }
         public string DestinationCityCountry { get; set; }
         public string DestinationImageUrl { get; set; }
+        public string DestinationId { get; set; }
+        public bool IsFavorite { get; set; }
         public BookingStatus Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public decimal TotalPrice { get; set; }

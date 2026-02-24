@@ -8,5 +8,6 @@ namespace JadooTravel.DataAccess.Abstract
         Task<long> CountByUserIdAsync(string userId);
         Task<bool> DeleteByIdAndUserIdAsync(string favoriteId, string userId);
         Task<List<UserFavorite>> GetByUserIdAsync(string userId);
+        Task<bool> DeleteByUserIdAndDestinationIdAsync(string userId, string destinationId);
     }
 }

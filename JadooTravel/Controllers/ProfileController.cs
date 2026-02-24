@@ -37,7 +37,7 @@ namespace JadooTravel.UI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit()
+        public async Task<IActionResult> Update()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -60,10 +60,33 @@ namespace JadooTravel.UI.Controllers
 
             return View(updateDto);
         }
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(string destinationId, string cityCountry, string imageUrl, decimal price)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Json(new { success = false, message = "Lütfen giriş yapınız" });
 
+            try
+            {
+                var existedBefore = (await _userProfileService.GetFavoritesAsync(user.Id))
+                    .Any(x => x.DestinationId == destinationId);
+
+                var result = await _userProfileService.ToggleFavoriteAsync(user.Id, destinationId, cityCountry, imageUrl, price);
+
+                if (!result)
+                    return Json(new { success = false, message = "Favori işlemi başarısız" });
+
+                return Json(new { success = true, isFavorite = !existedBefore });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateProfileDto model)
+        public async Task<IActionResult> Update(UpdateProfileDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);

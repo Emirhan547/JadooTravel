@@ -24,7 +24,7 @@ namespace JadooTravel.Business.Concrete
         {
             _userManager = userManager;
             _mapper = mapper;
-            bookingDal = bookingDal;
+            _bookingDal = bookingDal;
             _userFavoriteDal = userFavoriteDal;
         }
 
@@ -36,6 +36,7 @@ namespace JadooTravel.Business.Concrete
 
             var bookingCount = await _bookingDal.CountByUserIdAsync(userId);
             var favoriteCount = await _userFavoriteDal.CountByUserIdAsync(userId);
+            var favorites = await _userFavoriteDal.GetByUserIdAsync(userId);
 
             return new UserProfileDto
             {
@@ -50,7 +51,8 @@ namespace JadooTravel.Business.Concrete
                 ProfileImageUrl = user.ProfileImageUrl ?? "/public/assets/img/default-avatar.png",
                 CreatedDate = DateTime.UtcNow,
                 TotalBookings = (int)bookingCount,
-                TotalFavorites = (int)favoriteCount
+                TotalFavorites = (int)favoriteCount,
+                FavoriteDestinations = _mapper.Map<List<UserFavoriteDto>>(favorites)
             };
         }
         
@@ -86,10 +88,7 @@ namespace JadooTravel.Business.Concrete
             if (user == null)
                 return false;
 
-            var result = await _userManager.ChangePasswordAsync(
-                 user,
-                 changePasswordDto.CurrentPassword,
-                 changePasswordDto.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
 
             return result.Succeeded;
         }
@@ -112,12 +111,39 @@ namespace JadooTravel.Business.Concrete
             await _userFavoriteDal.CreateAsync(favorite);
             return true;
         }
-        
 
+        public async Task<bool> ToggleFavoriteAsync(string userId, string destinationId, string cityCountry, string imageUrl, decimal price)
+        {
+            var exists = await _userFavoriteDal.ExistsAsync(userId, destinationId);
+            if (exists)
+                return await _userFavoriteDal.DeleteByUserIdAndDestinationIdAsync(userId, destinationId);
+
+            return await AddFavoriteAsync(userId, destinationId, cityCountry, imageUrl, price);
+        }
         public async Task<bool> RemoveFavoriteAsync(string userId, string favoriteId)
-        => await _userFavoriteDal.DeleteByIdAndUserIdAsync(favoriteId, userId);
+       => await _userFavoriteDal.DeleteByIdAndUserIdAsync(favoriteId, userId);
 
         public async Task<List<UserFavoriteDto>> GetFavoritesAsync(string userId)
-         => _mapper.Map<List<UserFavoriteDto>>(await _userFavoriteDal.GetByUserIdAsync(userId));
+    
+            => _mapper.Map<List<UserFavoriteDto>>(await _userFavoriteDal.GetByUserIdAsync(userId));
+
+        public async Task<List<FavoriteDestinationStatDto>> GetFavoritesByDestinationAsync()
+        {
+            var favorites = await _userFavoriteDal.GetAllAsync();
+
+            return favorites
+                .GroupBy(x => new { x.DestinationId, x.CityCountry })
+                .Select(g => new FavoriteDestinationStatDto
+                {
+                    DestinationId = g.Key.DestinationId,
+                    CityCountry = g.Key.CityCountry,
+                    FavoriteCount = g.Count()
+                })
+                .OrderByDescending(x => x.FavoriteCount)
+                .Take(8)
+                .ToList();
+        }
     }
+
+
 }
