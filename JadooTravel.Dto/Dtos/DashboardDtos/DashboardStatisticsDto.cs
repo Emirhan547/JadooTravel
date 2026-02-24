@@ -1,4 +1,4 @@
-﻿using JadooTravel.Dto.Dtos.AnalyticsDtos;
+﻿
 using JadooTravel.Dto.Dtos.DestinationDtos;
 using System;
 using System.Collections.Generic;
@@ -22,10 +22,7 @@ namespace JadooTravel.Dto.Dtos.DashboardDtos
         public DateTime EndDate { get; set; }
         public List<DestinationCapacityDto> DestinationCapacities { get; set; }
         public List<ResultDestinationDto> LatestDestinations { get; set; }
-        public List<DailyStatsDto> DailyStats { get; set; }
-        public List<DestinationAnalyticsDto> DestinationAnalytics { get; set; }
-        public List<UserBehaviorDto> TopUsers { get; set; }
-        public List<TrafficSourceDto> TrafficSources { get; set; }
+     
 
     }
 }

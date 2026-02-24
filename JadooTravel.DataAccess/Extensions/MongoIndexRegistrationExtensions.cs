@@ -40,12 +40,7 @@ namespace JadooTravel.DataAccess.Extensions
                 new CreateIndexModel<ChatMessage>(
                     Builders<ChatMessage>.IndexKeys.Ascending(x => x.UserId).Descending(x => x.CreatedDate)));
 
-            var pageViewCollection = database.GetCollection<PageViewTrack>("PageViewTracks");
-            await pageViewCollection.Indexes.CreateManyAsync(new[]
-            {
-                new CreateIndexModel<PageViewTrack>(Builders<PageViewTrack>.IndexKeys.Descending(x => x.ViewedAt)),
-                new CreateIndexModel<PageViewTrack>(Builders<PageViewTrack>.IndexKeys.Ascending(x => x.PageUrl).Descending(x => x.ViewedAt))
-            });
+            
         }
     }
 }

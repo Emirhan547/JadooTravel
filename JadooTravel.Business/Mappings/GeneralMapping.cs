@@ -44,8 +44,7 @@ namespace JadooTravel.Business.Mappings
             CreateMap<ResultTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<CreateTripPlanDto, TripPlan>().ReverseMap();
             CreateMap<UpdateTripPlanDto, TripPlan>().ReverseMap();
-            CreateMap<PageViewTrack, dynamic>().ReverseMap();
-            CreateMap<ConversionTrack, dynamic>().ReverseMap();
+    
             CreateMap<UserFavorite, UserFavoriteDto>().ReverseMap();
 
             CreateMap<DestinationReview, ResultReviewDto>().ReverseMap();

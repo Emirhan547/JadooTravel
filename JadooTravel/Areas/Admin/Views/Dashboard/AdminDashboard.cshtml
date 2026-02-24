@@ -171,99 +171,7 @@
     </div>
 
     <!-- Charts Row -->
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white"><h6 class="mb-0">Günlük Trafik & Rezervasyon Trendi</h6></div>
-                <div class="card-body"><canvas id="dailyTrendChart" height="250"></canvas></div>
-            </div>
-        </div>
-
-        <div class="col-lg-6 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white"><h6 class="mb-0">Trafik Kaynakları Dağılımı</h6></div>
-                <div class="card-body"><canvas id="trafficSourceChart" height="250"></canvas></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white"><h6 class="mb-0">Destinasyon Kapasiteleri</h6></div>
-                <div class="card-body"><canvas id="capacityChart" height="260"></canvas></div>
-            </div>
-        </div>
-
-        <div class="col-lg-6 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white"><h6 class="mb-0">Destinasyon Bazlı Rezervasyon</h6></div>
-                <div class="card-body"><canvas id="destinationBookingChart" height="260"></canvas></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-7 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">Top Destinasyon Analytics</h6>
-                    <span class="metric-badge">En çok rezervasyon alan turlar</span>
-                </div>
-
-                <div class="card-body table-responsive">
-                    <table class="table soft-table mb-0">
-                        <thead>
-                            <tr>
-                                <th>Destinasyon</th>
-                                <th>Görüntülenme</th>
-                                <th>Rezervasyon</th>
-                                <th>Ciro</th>
-                                <th>Dönüşüm</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.DestinationAnalytics)
-                            {
-                                <tr>
-                                    <td>@item.CityCountry</td>
-                                    <td>@item.PageViews</td>
-                                    <td>@item.Bookings</td>
-                                    <td>@item.Revenue.ToString("N0") ₺</td>
-                                    <td>%@item.ConversionRate.ToString("N2")</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="col-lg-5 mb-4">
-            <div class="card panel-card h-100">
-                <div class="card-header bg-white"><h6 class="mb-0">Top Kullanıcılar</h6></div>
-                <div class="card-body">
-                    @foreach (var user in Model.TopUsers.Take(6))
-                    {
-                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                            <div>
-                                <strong>@user.UserId</strong><br />
-                                <small class="text-muted">@user.TotalVisits ziyaret · @user.TotalPageViews görüntülenme</small>
-                            </div>
-
-                            <div class="text-end">
-                                <div class="fw-semibold">@user.TotalSpent.ToString("N0") ₺</div>
-                                <small class="text-muted">@user.Bookings rezervasyon</small>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Latest Destinations -->
+  
     <div class="row">
         <div class="col-12 mb-4">
             <div class="card panel-card">
@@ -308,11 +216,9 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const dailyStats = @Html.Raw(Json.Serialize(Model.DailyStats));
+       
         const capacities = @Html.Raw(Json.Serialize(Model.DestinationCapacities));
-        const destinationAnalytics = @Html.Raw(Json.Serialize(Model.DestinationAnalytics));
-        const trafficSources = @Html.Raw(Json.Serialize(Model.TrafficSources));
-
+     
         const dailyLabels = dailyStats.map(x =>
             new Date(x.date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })
         );

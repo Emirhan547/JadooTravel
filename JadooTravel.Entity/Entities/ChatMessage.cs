@@ -22,17 +22,14 @@ namespace JadooTravel.Entity.Entities
         public string Message { get; set; }
         public string Response { get; set; }
 
-        // Konuşma kategorisi
         public ChatCategory Category { get; set; }
 
-        // Otomatik cevap mı, yoksa operatör tarafından mı?
         public bool IsAutomatic { get; set; } = true;
 
         // Operatör cevapsa, hangi operatör?
         public string OperatorId { get; set; }
         public string OperatorName { get; set; }
 
-        // Müşteri memnun mu?
         public int? Satisfaction { get; set; } // 1-5
         public string SatisfactionComment { get; set; }
 
