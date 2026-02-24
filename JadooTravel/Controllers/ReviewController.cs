@@ -196,6 +196,58 @@ namespace JadooTravel.UI.Controllers
             {
                 return Json(new { error = ex.Message });
             }
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpsertInline(string? reviewId, string destinationId, int rating, string title, string comment, int visitedDays)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Json(new { success = false, message = "Lütfen giriş yapınız" });
+
+            if (string.IsNullOrWhiteSpace(destinationId) || rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(comment))
+            {
+                return Json(new { success = false, message = "Lütfen tüm alanları doğru doldurunuz" });
+            }
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(reviewId))
+                {
+                    await _reviewService.CreateAsync(new CreateReviewDto
+                    {
+                        DestinationId = destinationId,
+                        Rating = rating,
+                        Title = title,
+                        Comment = comment,
+                        VisitedDays = visitedDays,
+                        Tags = new List<string>()
+                    }, user.Id);
+
+                    return Json(new { success = true, message = "Yorum eklendi. Onay sonrası görünür olacaktır." });
+                }
+
+                var review = await _reviewService.GetByIdAsync(reviewId);
+                if (review == null || review.UserId != user.Id)
+                    return Json(new { success = false, message = "Bu yorumu güncelleyemezsiniz" });
+
+                await _reviewService.UpdateAsync(new UpdateReviewDto
+                {
+                    Id = reviewId,
+                    Rating = rating,
+                    Title = title,
+                    Comment = comment,
+                    VisitedDays = visitedDays,
+                    Tags = review.Tags ?? new List<string>()
+                });
+
+                return Json(new { success = true, message = "Yorum güncellendi. Tekrar onaya gönderildi." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

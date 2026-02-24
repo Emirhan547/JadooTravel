@@ -1,0 +1,165 @@
+﻿@model JadooTravel.UI.Models.DestinationDetailViewModel
+@{
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+    ViewData["Title"] = Model.Destination.CityCountry;
+}
+
+<section class="pt-8 pb-5">
+    <div class="container">
+        <a href="/Destination/Index" class="btn btn-outline-secondary mb-4">← Tüm Turlar</a>
+        <div class="card shadow-sm mb-4">
+            <img src="@Model.Destination.ImageUrl" class="card-img-top" alt="@Model.Destination.CityCountry" style="max-height:400px;object-fit:cover;" />
+            <div class="card-body">
+                <h2>@Model.Destination.CityCountry</h2>
+                <p class="text-muted">@Model.Destination.DayNight • Kişi kapasitesi: @Model.Destination.Capacity</p>
+                <h4 class="text-primary">@Model.Destination.Price ₺</h4>
+                <p>@Model.Destination.Description</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h4 class="mb-0">Yorumlar</h4></div>
+            <div class="card-body">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form method="post" asp-controller="Review" asp-action="UpsertInline" class="border rounded p-3 mb-4" id="reviewForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="destinationId" value="@Model.Destination.Id" />
+                        <input type="hidden" name="reviewId" id="reviewId" />
+                        <div class="row g-2">
+                            <div class="col-md-2">
+                                <input type="number" min="1" max="5" name="rating" class="form-control" placeholder="Puan (1-5)" required />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" min="1" name="visitedDays" class="form-control" placeholder="Kaç gün?" required />
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" name="title" class="form-control" placeholder="Başlık" required />
+                            </div>
+                            <div class="col-12">
+                                <textarea name="comment" class="form-control" rows="3" placeholder="Yorumunuz" required></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="reviewSubmitBtn">Yorum Ekle</button>
+                            <button type="button" class="btn btn-outline-secondary d-none" id="cancelEditBtn">Vazgeç</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info">Yorum yapmak için <a href="/Auth/Login">giriş yapın</a>.</div>
+                }
+
+                @if (Model.Reviews.Any())
+                {
+                    @foreach (var review in Model.Reviews)
+                    {
+                        var mine = !string.IsNullOrEmpty(Model.CurrentUserId) && review.UserId == Model.CurrentUserId;
+                        <div class="border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>@review.UserName</strong>
+                                    <span class="text-muted ms-2">@review.CreatedDate.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                                    @if (!review.IsApproved)
+                                    {
+                                        <span class="badge bg-warning text-dark ms-2">Onay Bekliyor</span>
+                                    }
+                                </div>
+                                @if (mine)
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">⋮</button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <button type="button" class="dropdown-item edit-review-btn"
+                                                        data-review-id="@review.Id"
+                                                        data-rating="@review.Rating"
+                                                        data-visited-days="@review.VisitedDays"
+                                                        data-title="@review.Title"
+                                                        data-comment="@review.Comment">
+                                                    Güncelle
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item text-danger delete-review-btn" data-review-id="@review.Id">Sil</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+                            <div class="text-warning">
+                                @(new string('★', review.Rating) + new string('☆', 5 - review.Rating))
+                            </div>
+                            <h6 class="mt-2">@review.Title</h6>
+                            <p class="mb-1">@review.Comment</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Henüz yorum yok.</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.edit-review-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const form = document.getElementById('reviewForm');
+            if (!form) return;
+            form.querySelector('#reviewId').value = this.dataset.reviewId;
+            form.querySelector('[name="rating"]').value = this.dataset.rating;
+            form.querySelector('[name="visitedDays"]').value = this.dataset.visitedDays;
+            form.querySelector('[name="title"]').value = this.dataset.title;
+            form.querySelector('[name="comment"]').value = this.dataset.comment;
+            document.getElementById('reviewSubmitBtn').innerText = 'Yorumu Güncelle';
+            document.getElementById('cancelEditBtn').classList.remove('d-none');
+            window.scrollTo({ top: form.offsetTop - 120, behavior: 'smooth' });
+        });
+    });
+
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            const form = document.getElementById('reviewForm');
+            form.reset();
+            form.querySelector('#reviewId').value = '';
+            document.getElementById('reviewSubmitBtn').innerText = 'Yorum Ekle';
+            cancelBtn.classList.add('d-none');
+        });
+    }
+
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(reviewForm);
+            const response = await fetch(reviewForm.action, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) window.location.reload();
+        });
+    }
+
+    document.querySelectorAll('.delete-review-btn').forEach(button => {
+        button.addEventListener('click', async function () {
+            if (!confirm('Yorum silinsin mi?')) return;
+            const formData = new FormData();
+            formData.append('reviewId', this.dataset.reviewId);
+            const response = await fetch('/Review/DeleteReview', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) window.location.reload();
+        });
+    });
+
+</script>

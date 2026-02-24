@@ -1,0 +1,41 @@
+﻿@model List<JadooTravel.Dto.Dtos.ReviewDtos.UserReviewDto>
+@{
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+    ViewData["Title"] = "Yorumlarım";
+}
+
+<section class="pt-8 pb-5">
+    <div class="container">
+        <h2 class="fw-bold mb-4">Yorumlarım</h2>
+        @if (Model.Any())
+        {
+            <div class="row g-3">
+                @foreach (var item in Model.OrderByDescending(x => x.CreatedDate))
+                {
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0">@item.DestinationName</h5>
+                                    <span class="badge @(item.IsApproved ? "bg-success" : "bg-warning text-dark")">
+                                        @(item.IsApproved ? "Onaylı" : "Onay Bekliyor")
+                                    </span>
+                                </div>
+                                <div class="text-warning mb-2">
+                                    @(item.Rating > 0 ? new string('★', item.Rating) : "")
+                                </div>
+                                <h6>@item.Title</h6>
+                                <p class="mb-2">@item.Comment</p>
+                                <small class="text-muted">@item.CreatedDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Henüz yorumunuz bulunmuyor.</div>
+        }
+    </div>
+</section>

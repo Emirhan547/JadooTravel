@@ -1,4 +1,4 @@
-﻿@model List<ResultDestinationDto>
+﻿Default@model List<ResultDestinationDto>
 
 <section class="pt-5" id="destination">
     <div class="container position-relative">
@@ -20,7 +20,7 @@
                         <div class="card-body py-4 px-3">
                             <div class="d-flex flex-column flex-lg-row justify-content-between mb-3">
                                 <h4 class="text-secondary fw-medium">
-                                    <a class="link-900 text-decoration-none stretched-link" href="#!">
+                                        <a class="link-900 text-decoration-none stretched-link" href="/Destination/Detail/@item.Id">
                                         @item.CityCountry
                                     </a>
                                 </h4>
@@ -34,6 +34,9 @@
                     </div>
                 </div>
             }
+            </div>
+            <div class="text-center mt-4">
+                <a href="/Destination/Index" class="btn btn-primary">Daha Fazlası</a>
         </div>
     </div>
 </section>
