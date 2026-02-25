@@ -1,32 +1,36 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.CtaDtos;
 using JadooTravel.Dto.Dtos.PartnerDtos;
+using JadooTravel.UI.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JadooTravel.UI.Areas.Admin.Controllers
 {
-    public class PartnerController(IPartnerService _partnerService) : Controller
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    public class PartnerController(IPartnerService _partnerService, IElasticAuditLogger _auditLogger) : Controller
     {
         public async Task<IActionResult> PartnerList()
         {
             var values = await _partnerService.GetAllAsync();
+            await _auditLogger.LogAsync("admin.partner.list", "admin", User.Identity?.Name, "list", "partner", null, "success", new { count = values.Count });
             return View(values);
         }
         [HttpGet]
-        public IActionResult CreatePartner()
-        {
-            return View();
-        }
+        public IActionResult CreatePartner() => View();
         [HttpPost]
         public async Task<IActionResult> CreatePartner(CreatePartnerDto createPartnerDto)
         {
             await _partnerService.CreateAsync(createPartnerDto);
+            await _auditLogger.LogAsync("admin.partner.create", "admin", User.Identity?.Name, "create", "partner", null, "success");
             return RedirectToAction("PartnerList");
         }
 
         public async Task<IActionResult> DeletePartner(string id)
         {
             await _partnerService.DeleteAsync(id);
+            await _auditLogger.LogAsync("admin.partner.delete", "admin", User.Identity?.Name, "delete", "partner", id, "success");
             return RedirectToAction("PartnerList");
         }
         [HttpGet]
@@ -39,6 +43,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdatePartner(UpdatePartnerDto updatePartnerDto)
         {
             await _partnerService.UpdateAsync(updatePartnerDto);
+            await _auditLogger.LogAsync("admin.partner.update", "admin", User.Identity?.Name, "update", "partner", updatePartnerDto.Id, "success");
             return RedirectToAction("PartnerList");
         }
     }

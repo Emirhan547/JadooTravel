@@ -1,9 +1,10 @@
 ﻿using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.ReviewDtos;
+using JadooTravel.Entity.Entities;
+using JadooTravel.UI.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using JadooTravel.Entity.Entities;
 
 namespace JadooTravel.UI.Controllers
 {
@@ -12,13 +13,18 @@ namespace JadooTravel.UI.Controllers
     {
         private readonly IReviewService _reviewService;
         private readonly UserManager<AppUser> _userManager;
-
+        private readonly ILogger<ReviewController> _logger;
+        private readonly IElasticAuditLogger _auditLogger;
         public ReviewController(
             IReviewService reviewService,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            ILogger<ReviewController> logger,
+            IElasticAuditLogger auditLogger)
         {
             _reviewService = reviewService;
             _userManager = userManager;
+            _logger = logger;
+            _auditLogger = auditLogger;
         }
 
         [HttpGet]
@@ -31,10 +37,13 @@ namespace JadooTravel.UI.Controllers
             try
             {
                 var reviews = await _reviewService.GetUserReviewsAsync(user.Id);
+                await _auditLogger.LogAsync("review.list", "user", user.Id, "list", "review", null, "success", new { count = reviews.Count });
                 return View(reviews);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "MyReviews failed. UserId: {UserId}", user.Id);
+                await _auditLogger.LogAsync("review.list", "user", user.Id, "list", "review", null, "error", new { ex.Message });
                 TempData["error"] = ex.Message;
                 return View(new List<UserReviewDto>());
             }
@@ -61,11 +70,14 @@ namespace JadooTravel.UI.Controllers
             try
             {
                 await _reviewService.CreateAsync(createReviewDto, user.Id);
+                await _auditLogger.LogAsync("review.create", "user", user.Id, "create", "review", null, "success", new { createReviewDto.DestinationId, createReviewDto.Rating });
                 TempData["success"] = "Yorumunuz başarıyla oluşturuldu. Admin onayı beklemektedir.";
                 return RedirectToAction("MyReviews");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "CreateReview failed. UserId: {UserId}, DestinationId: {DestinationId}", user.Id, createReviewDto.DestinationId);
+                await _auditLogger.LogAsync("review.create", "user", user.Id, "create", "review", null, "error", new { createReviewDto.DestinationId, ex.Message });
                 ModelState.AddModelError("", ex.Message);
                 return View(createReviewDto);
             }
@@ -82,8 +94,10 @@ namespace JadooTravel.UI.Controllers
             {
                 var review = await _reviewService.GetByIdAsync(reviewId);
                 if (review.UserId != user.Id)
+                {
+                    await _auditLogger.LogAsync("review.edit", "user", user.Id, "edit", "review", reviewId, "forbidden");
                     return Forbid();
-
+                }
                 var updateDto = new UpdateReviewDto
                 {
                     Id = review.Id,
@@ -98,6 +112,7 @@ namespace JadooTravel.UI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "EditReview get failed. UserId: {UserId}, ReviewId: {ReviewId}", user.Id, reviewId);
                 TempData["error"] = ex.Message;
                 return RedirectToAction("MyReviews");
             }
@@ -118,14 +133,19 @@ namespace JadooTravel.UI.Controllers
             {
                 var review = await _reviewService.GetByIdAsync(updateReviewDto.Id);
                 if (review.UserId != user.Id)
+                {
+                    await _auditLogger.LogAsync("review.edit", "user", user.Id, "edit", "review", updateReviewDto.Id, "forbidden");
                     return Forbid();
-
+                }
                 await _reviewService.UpdateAsync(updateReviewDto);
+                await _auditLogger.LogAsync("review.edit", "user", user.Id, "edit", "review", updateReviewDto.Id, "success");
                 TempData["success"] = "Yorumunuz güncellenmiştir. Tekrar onaya gönderildi.";
                 return RedirectToAction("MyReviews");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "EditReview post failed. UserId: {UserId}, ReviewId: {ReviewId}", user.Id, updateReviewDto.Id);
+                await _auditLogger.LogAsync("review.edit", "user", user.Id, "edit", "review", updateReviewDto.Id, "error", new { ex.Message });
                 ModelState.AddModelError("", ex.Message);
                 return View(updateReviewDto);
             }
@@ -142,13 +162,18 @@ namespace JadooTravel.UI.Controllers
             {
                 var review = await _reviewService.GetByIdAsync(reviewId);
                 if (review.UserId != user.Id)
+                {
+                    await _auditLogger.LogAsync("review.delete", "user", user.Id, "delete", "review", reviewId, "forbidden");
                     return Json(new { success = false, message = "Bu yorumu silemezsiniz" });
-
+                }
                 await _reviewService.DeleteAsync(reviewId);
+                await _auditLogger.LogAsync("review.delete", "user", user.Id, "delete", "review", reviewId, "success");
                 return Json(new { success = true, message = "Yorum silindi" });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "DeleteReview failed. UserId: {UserId}, ReviewId: {ReviewId}", user.Id, reviewId);
+                await _auditLogger.LogAsync("review.delete", "user", user.Id, "delete", "review", reviewId, "error", new { ex.Message });
                 return Json(new { success = false, message = ex.Message });
             }
         }
@@ -163,11 +188,12 @@ namespace JadooTravel.UI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "MarkHelpful failed. ReviewId: {ReviewId}", reviewId);
                 return Json(new { success = false, message = ex.Message });
             }
         }
 
-        // Destination detail sayfasında gösterilecek yorumlar
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetDestinationReviews(string destinationId)
@@ -179,6 +205,7 @@ namespace JadooTravel.UI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "GetDestinationReviews failed. DestinationId: {DestinationId}", destinationId);
                 return BadRequest(ex.Message);
             }
         }
@@ -194,6 +221,7 @@ namespace JadooTravel.UI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "GetDestinationReviewSummary failed. DestinationId: {DestinationId}", destinationId);
                 return Json(new { error = ex.Message });
             }
 
@@ -207,9 +235,9 @@ namespace JadooTravel.UI.Controllers
                 return Json(new { success = false, message = "Lütfen giriş yapınız" });
 
             if (string.IsNullOrWhiteSpace(destinationId) || rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(comment))
-            {
+            
                 return Json(new { success = false, message = "Lütfen tüm alanları doğru doldurunuz" });
-            }
+            
 
             try
             {
@@ -224,13 +252,17 @@ namespace JadooTravel.UI.Controllers
                         VisitedDays = visitedDays,
                         Tags = new List<string>()
                     }, user.Id);
+                    await _auditLogger.LogAsync("review.upsert", "user", user.Id, "create", "review", null, "success", new { destinationId, rating });
 
                     return Json(new { success = true, message = "Yorum eklendi. Onay sonrası görünür olacaktır." });
                 }
 
                 var review = await _reviewService.GetByIdAsync(reviewId);
                 if (review == null || review.UserId != user.Id)
+                {
+                    await _auditLogger.LogAsync("review.upsert", "user", user.Id, "update", "review", reviewId, "forbidden");
                     return Json(new { success = false, message = "Bu yorumu güncelleyemezsiniz" });
+                }
 
                 await _reviewService.UpdateAsync(new UpdateReviewDto
                 {
@@ -241,11 +273,14 @@ namespace JadooTravel.UI.Controllers
                     VisitedDays = visitedDays,
                     Tags = review.Tags ?? new List<string>()
                 });
+                await _auditLogger.LogAsync("review.upsert", "user", user.Id, "update", "review", reviewId, "success", new { destinationId, rating });
 
                 return Json(new { success = true, message = "Yorum güncellendi. Tekrar onaya gönderildi." });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "UpsertInline failed. UserId: {UserId}, ReviewId: {ReviewId}", user.Id, reviewId);
+                await _auditLogger.LogAsync("review.upsert", "user", user.Id, "upsert", "review", reviewId, "error", new { destinationId, ex.Message });
                 return Json(new { success = false, message = ex.Message });
             }
         }

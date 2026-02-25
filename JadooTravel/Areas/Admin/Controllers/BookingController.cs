@@ -3,6 +3,7 @@
 using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.BookingDtos;
 using JadooTravel.Entity.Entities.Enums;
+using JadooTravel.UI.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,15 +14,18 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
     public class BookingController : Controller
     {
         private readonly IBookingService _bookingService;
+        private readonly IElasticAuditLogger _auditLogger;
 
-        public BookingController(IBookingService bookingService)
+        public BookingController(IBookingService bookingService, IElasticAuditLogger auditLogger)
         {
             _bookingService = bookingService;
+            _auditLogger = auditLogger;
         }
 
         public async Task<IActionResult> BookingList()
         {
             var values = await _bookingService.GetAllAsync();
+            await _auditLogger.LogAsync("admin.booking.list", "admin", User.Identity?.Name, "list", "booking", null, "success", new { count = values.Count });
             return View(values);
         }
 
@@ -53,6 +57,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         public async Task<IActionResult> BookingDetails(string id)
         {
             var booking = await _bookingService.GetByIdAsync(id);
+            await _auditLogger.LogAsync("admin.booking.details", "admin", User.Identity?.Name, "view", "booking", id, "success");
             return View(booking);
         }
 
@@ -60,6 +65,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         public async Task<IActionResult> PendingBookings()
         {
             var bookings = await _bookingService.GetBookingsByStatusAsync(BookingStatus.Pending);
+            await _auditLogger.LogAsync("admin.booking.pending", "admin", User.Identity?.Name, "list", "booking", null, "success", new { count = bookings.Count });
             return View("BookingList", bookings);
         }
 
@@ -73,6 +79,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             };
 
             await _bookingService.UpdateBookingStatusAsync(updateDto);
+            await _auditLogger.LogAsync("admin.booking.status", "admin", User.Identity?.Name, "update_status", "booking", id, "success", new { status = status.ToString(), notes });
         }
     }
 }

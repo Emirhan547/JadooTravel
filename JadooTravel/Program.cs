@@ -1,4 +1,5 @@
-﻿using JadooTravel.Business.Abstract;
+﻿using Elastic.Clients.Elasticsearch;
+using JadooTravel.Business.Abstract;
 using JadooTravel.Business.Extensions;
 using JadooTravel.Business.Mappings;
 using JadooTravel.Business.Options;
@@ -6,12 +7,21 @@ using JadooTravel.DataAccess.Extensions;
 using JadooTravel.Entity.Entities;
 using JadooTravel.Services;
 using JadooTravel.UI.Extensions;
-
+using JadooTravel.UI.Logging;
+using JadooTravel.UI.Models;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<ElasticLoggingOptions>(builder.Configuration.GetSection("ElasticConfiguration"));
 
+var elasticUri = builder.Configuration["ElasticConfiguration:Uri"] ?? "http://localhost:9200";
+builder.Services.AddSingleton(_ =>
+{
+    var settings = new ElasticsearchClientSettings(new Uri(elasticUri));
+    return new ElasticsearchClient(settings);
+});
+builder.Services.AddScoped<IElasticAuditLogger, ElasticAuditLogger>();
 
 builder.Services.AddServiceExtensions();
 builder.Services.AddRepositoryExtensions();
@@ -78,7 +88,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-// Program.cs'e ekle:
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -86,7 +96,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
- // Add this using directive at the top of the file
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
