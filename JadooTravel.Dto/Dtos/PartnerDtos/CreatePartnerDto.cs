@@ -9,7 +9,7 @@ namespace JadooTravel.Dto.Dtos.PartnerDtos
     public class CreatePartnerDto
     {
         public string Name { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public int Order { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.DestinationDtos;
 using JadooTravel.Entity.Entities;
 using JadooTravel.UI.Logging;
+using JadooTravel.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -18,10 +19,12 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
     {
         private readonly IDestinationService _destinationService;
         private readonly IElasticAuditLogger _auditLogger;
-        public DestinationController(IDestinationService destinationService, IElasticAuditLogger auditLogger)
+        private readonly IAwsS3Service _awsS3Service;
+        public DestinationController(IDestinationService destinationService, IElasticAuditLogger auditLogger, IAwsS3Service awsS3Service)
         {
             _destinationService = destinationService;
             _auditLogger = auditLogger;
+            _awsS3Service = awsS3Service;
         }
 
         public async Task<IActionResult> DestinationList()
@@ -33,8 +36,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult CreateDestination() => View();
         [HttpPost]
-        public async Task<IActionResult> CreateDestination(CreateDestinationDto createDestinationDto)
+        public async Task<IActionResult> CreateDestination(CreateDestinationDto createDestinationDto, IFormFile? imageFile)
         {
+            if (imageFile is not null)
+                createDestinationDto.ImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "destinations");
             await _destinationService.CreateAsync(createDestinationDto);
             await _auditLogger.LogAsync("admin.destination.create", "admin", User.Identity?.Name, "create", "destination", null, "success");
             return RedirectToAction("DestinationList");
@@ -53,8 +58,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             return View(value);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateDestination(UpdateDestinationDto updateDestinationDto)
+        public async Task<IActionResult> UpdateDestination(UpdateDestinationDto updateDestinationDto, IFormFile? imageFile)
         {
+            if (imageFile is not null)
+                updateDestinationDto.ImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "destinations");
             await _destinationService.UpdateAsync(updateDestinationDto);
             await _auditLogger.LogAsync("admin.destination.update", "admin", User.Identity?.Name, "update", "destination", updateDestinationDto.Id, "success");
             return RedirectToAction("DestinationList");

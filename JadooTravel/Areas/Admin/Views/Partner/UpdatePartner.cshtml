@@ -4,10 +4,10 @@
     ViewData["Title"] = "Partner Güncelle"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <div class="card">
-    <div class="card-header"><h3 class="card-title">Partner Güncelle</h3></div><form method="post">
+    <div class="card-header"><h3 class="card-title">Partner Güncelle</h3></div><form method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Id" /><div class="card-body">
             <div class="form-group"><label>Partner Adı</label><input asp-for="Name" class="form-control" /></div>
-            <div class="form-group"><label>Görsel URL</label><input asp-for="ImageUrl" class="form-control" /></div>
+            <div class="form-group"><label>S3 Görsel Yükle</label><input type="file" name="imageFile" accept="image/*" class="form-control" /></div>
             <div class="form-group"><label>Sıra</label><input asp-for="Order" type="number" class="form-control" /></div>
         </div><div class="card-footer"><button class="btn btn-warning">Güncelle</button><a href="/Admin/Partner/PartnerList" class="btn btn-secondary ml-2">İptal</a></div>
     </form>

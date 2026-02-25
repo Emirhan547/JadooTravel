@@ -1,4 +1,7 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Elastic.Clients.Elasticsearch;
 using JadooTravel.Business.Abstract;
 using JadooTravel.Business.Extensions;
 using JadooTravel.Business.Mappings;
@@ -9,10 +12,29 @@ using JadooTravel.Services;
 using JadooTravel.UI.Extensions;
 using JadooTravel.UI.Logging;
 using JadooTravel.UI.Models;
+using JadooTravel.UI.Options;
+using JadooTravel.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.Configure<AwsS3Options>(builder.Configuration.GetSection("AWS:S3"));
+
+var awsS3Options = builder.Configuration.GetSection("AWS:S3").Get<AwsS3Options>() ?? new AwsS3Options();
+builder.Services.AddSingleton<IAmazonS3>(_ =>
+{
+    var regionEndpoint = RegionEndpoint.GetBySystemName(string.IsNullOrWhiteSpace(awsS3Options.Region) ? "us-east-1" : awsS3Options.Region);
+
+    if (!string.IsNullOrWhiteSpace(awsS3Options.AccessKey) && !string.IsNullOrWhiteSpace(awsS3Options.SecretKey))
+    {
+        var credentials = new BasicAWSCredentials(awsS3Options.AccessKey, awsS3Options.SecretKey);
+        return new AmazonS3Client(credentials, regionEndpoint);
+    }
+
+    return new AmazonS3Client(regionEndpoint);
+});
+builder.Services.AddScoped<IAwsS3Service, AwsS3Service>();
 builder.Services.Configure<ElasticLoggingOptions>(builder.Configuration.GetSection("ElasticConfiguration"));
 
 var elasticUri = builder.Configuration["ElasticConfiguration:Uri"] ?? "http://localhost:9200";

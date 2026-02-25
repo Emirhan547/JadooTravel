@@ -4,6 +4,7 @@ using JadooTravel.Dto.Dtos.FeatureDtos;
 using JadooTravel.Dto.Dtos.TestimonialDtos;
 using JadooTravel.Entity.Entities;
 using JadooTravel.UI.Logging;
+using JadooTravel.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -16,10 +17,12 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
     {
         private readonly ITestimonialService _testimonialService;
         private readonly IElasticAuditLogger _auditLogger;
-        public TestimonialController(ITestimonialService testimonialService, IElasticAuditLogger auditLogger)
+        private readonly IAwsS3Service _awsS3Service;
+        public TestimonialController(ITestimonialService testimonialService, IElasticAuditLogger auditLogger, IAwsS3Service awsS3Service)
         {
             _testimonialService = testimonialService;
             _auditLogger = auditLogger;
+            _awsS3Service = awsS3Service;
         }
 
         public async Task<IActionResult> TestimonialList()
@@ -31,9 +34,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult CreateTestimonial() => View();
         [HttpPost]
-        public async Task<IActionResult> CreateTestimonial(CreateTestimonialDto createTestimonialDto)
+        public async Task<IActionResult> CreateTestimonial(CreateTestimonialDto createTestimonialDto, IFormFile? imageFile)
         {
-
+            if (imageFile is not null)
+                createTestimonialDto.ImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "testimonials");
             await _testimonialService.CreateAsync(createTestimonialDto);
             await _auditLogger.LogAsync("admin.testimonial.create", "admin", User.Identity?.Name, "create", "testimonial", null, "success");
             return RedirectToAction("TestimonialList");
@@ -52,8 +56,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             return View(value);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateTestimonial(UpdateTestimonialDto updateTestimonialDto)
+        public async Task<IActionResult> UpdateTestimonial(UpdateTestimonialDto updateTestimonialDto, IFormFile? imageFile)
         {
+            if (imageFile is not null)
+                updateTestimonialDto.ImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "testimonials");
             await _testimonialService.UpdateAsync(updateTestimonialDto);
             await _auditLogger.LogAsync("admin.testimonial.update", "admin", User.Identity?.Name, "update", "testimonial", updateTestimonialDto.Id, "success");
             return RedirectToAction("TestimonialList");
