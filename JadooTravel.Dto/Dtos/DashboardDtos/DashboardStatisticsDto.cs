@@ -23,7 +23,7 @@ namespace JadooTravel.Dto.Dtos.DashboardDtos
         public DateTime EndDate { get; set; }
         public List<DestinationCapacityDto> DestinationCapacities { get; set; }
         public List<ResultDestinationDto> LatestDestinations { get; set; }
-        public List<FavoriteDestinationStatDto> FavoriteDestinationStats { get; set; } = new();
+
 
     }
 }

@@ -1,0 +1,110 @@
+﻿@using JadooTravel.UI.Areas.Admin.Models
+@model AdminAuditLogPageViewModel
+
+@{
+    ViewData["Title"] = "Loglama";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap" style="gap: 12px;">
+        <div>
+            <h2 class="mb-1">Admin Loglama Merkezi</h2>
+            <p class="text-muted mb-0">ElasticSearch audit kayıtları kategori bazlı listeleniyor.</p>
+        </div>
+        <span class="badge badge-pill" style="background: linear-gradient(120deg, #6a11cb, #2575fc); color: #fff; padding: 10px 14px; font-size: 13px;">
+            Son Güncelleme: @Model.GeneratedAt.ToString("dd.MM.yyyy HH:mm")
+        </span>
+    </div>
+
+    <div class="row">
+        @foreach (var category in Model.Categories)
+        {
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <div class="card border-0 shadow-sm h-100 log-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="log-icon mr-3">
+                                    <i class="fa @category.Icon"></i>
+                                </div>
+                                <h5 class="mb-0">@category.Title</h5>
+                            </div>
+                            <span class="badge badge-light text-dark">@category.Badge</span>
+                        </div>
+
+                        @if (category.Entries.Any())
+                        {
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var log in category.Entries)
+                                {
+                                    <li class="log-item">
+                                        <i class="fa fa-circle text-primary" style="font-size: 8px;"></i>
+                                        <div class="log-content">
+                                            <span class="d-block">@log.Message</span>
+                                            <small class="text-muted d-block mt-1">
+                                                @log.Timestamp.ToString("dd.MM.yyyy HH:mm") · @log.EventName · @log.Status
+                                                @if (!string.IsNullOrWhiteSpace(log.ActorEmail))
+                                                {
+                                                    <span> · @log.ActorEmail</span>
+                                                }
+                                            </small>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <div class="alert alert-light mb-0" role="alert">
+                                Bu kategoride gösterilecek log bulunamadı.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .log-card {
+        border-radius: 16px;
+        background: linear-gradient(160deg, #ffffff 0%, #f8f9ff 100%);
+        transition: all 0.3s ease;
+    }
+
+        .log-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(19, 62, 135, 0.12) !important;
+        }
+
+    .log-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 16px;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+    }
+
+    .log-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 0;
+        color: #4b5563;
+        border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .log-content {
+        line-height: 1.4;
+    }
+
+    .log-item:last-child {
+        border-bottom: none;
+    }
+</style>

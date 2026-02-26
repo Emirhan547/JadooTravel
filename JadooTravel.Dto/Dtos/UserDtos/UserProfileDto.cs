@@ -19,7 +19,6 @@ namespace JadooTravel.Dto.Dtos.UserDtos
         public string ProfileImageUrl { get; set; }
         public DateTime CreatedDate { get; set; }
         public int TotalBookings { get; set; }
-        public int TotalFavorites { get; set; }
-        public List<UserFavoriteDto> FavoriteDestinations { get; set; } = new();
+      
     }
 }

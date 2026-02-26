@@ -16,7 +16,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         private readonly IBookingService _bookingService;
         private readonly ITestimonialService _testimonialService;
         private readonly IMapper _mapper;
-        private readonly IUserProfileService _userProfileService;
+      
 
         public DashboardController(
              ICategoryService categoryService,
@@ -24,15 +24,15 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
              IBookingService bookingService,
              ITestimonialService testimonialService,
 
-             IMapper mapper,
-             IUserProfileService userProfileService)
+             IMapper mapper)
+          
         {
             _categoryService = categoryService;
             _destinationService = destinationService;
             _bookingService = bookingService;
             _testimonialService = testimonialService;
             _mapper = mapper;
-            _userProfileService = userProfileService;
+         
         }
 
         [HttpGet]
@@ -44,7 +44,6 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             var destinations = await _destinationService.GetAllAsync();
             var bookings = await _bookingService.GetAllAsync();
             var testimonials = await _testimonialService.GetAllAsync();
-            var favoriteDestinationStats = await _userProfileService.GetFavoritesByDestinationAsync();
             var destinationDtos = _mapper.Map<List<ResultDestinationDto>>(destinations);
 
             var statistics = new DashboardStatisticsDto
@@ -53,7 +52,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
                 TotalDestinations = destinations.Count,
                 TotalBookings = bookings.Count,
                 TotalTestimonials = testimonials.Count,
-              
+
                 StartDate = startDate.Value,
                 EndDate = endDate.Value,
                 DestinationCapacities = destinationDtos.Select(d => new DestinationCapacityDto
@@ -63,7 +62,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
                     Price = d.Price
                 }).ToList(),
                 LatestDestinations = destinationDtos.OrderByDescending(d => d.Id).Take(5).ToList(),
-                FavoriteDestinationStats = favoriteDestinationStats,
+          
             };
 
             return View(statistics);
@@ -82,8 +81,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             }).ToList();
 
             return Json(data);
-        
-            }
+
         }
     }
-
+}

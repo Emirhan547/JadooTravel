@@ -13,11 +13,7 @@ namespace JadooTravel.Business.Abstract
         Task<UserProfileDto?> GetProfileAsync(string userId);
         Task<bool> UpdateProfileAsync(UpdateProfileDto updateProfileDto);
         Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto);
-        Task<bool> AddFavoriteAsync(string userId, string destinationId, string cityCountry, string imageUrl, decimal price);
-        Task<bool> RemoveFavoriteAsync(string userId, string favoriteId);
-        Task<List<UserFavoriteDto>> GetFavoritesAsync(string userId);
-        Task<bool> ToggleFavoriteAsync(string userId, string destinationId, string cityCountry, string imageUrl, decimal price);
-        Task<List<FavoriteDestinationStatDto>> GetFavoritesByDestinationAsync();
+  
 
     }
 }

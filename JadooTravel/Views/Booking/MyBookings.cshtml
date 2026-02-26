@@ -42,12 +42,13 @@
                                     <div class="d-flex align-items-center gap-2">
                                         <button type="button"
                                                 class="btn btn-link p-0 favorite-toggle"
+                                                data-booking-id="@booking.Id"
                                                 data-destination-id="@booking.DestinationId"
                                                 data-city-country="@booking.DestinationCityCountry"
                                                 data-image-url="@booking.DestinationImageUrl"
                                                 data-price="@booking.TotalPrice"
                                                 aria-label="Favori">
-                                            <i class="@(booking.IsFavorite ? "fas" : "far") fa-heart fs-4 @(booking.IsFavorite ? "text-danger" : "text-secondary")"></i>
+                           
                                         </button>
                                         <span class="badge bg-@booking.StatusColor">@booking.StatusDisplay</span>
                                     </div>
@@ -77,67 +78,93 @@
 
 @section Scripts {
     <script>
+        async function postFormUrlEncoded(url, data) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                body: new URLSearchParams(data)
+            });
+
+            const contentType = response.headers.get("content-type") || "";
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("HTTP ERROR:", response.status, text);
+                throw new Error("İstek başarısız: " + response.status);
+            }
+
+            if (!contentType.includes("application/json")) {
+                const text = await response.text();
+                console.error("JSON olmayan cevap:", text);
+                throw new Error("Sunucu JSON dönmedi.");
+            }
+
+            return await response.json();
+        }
+
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        const token = tokenInput ? tokenInput.value : "";
+
+        // ================= CANCEL BOOKING =================
         document.querySelectorAll('.cancel-booking-btn').forEach(button => {
             button.addEventListener('click', async function () {
-                const bookingId = this.getAttribute('data-booking-id');
+
+                const bookingId = this.dataset.bookingId;
                 if (!confirm('Rezervasyonu iptal etmek istediğinize emin misiniz?')) return;
 
-                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-                const token = tokenInput ? tokenInput.value : '';
+                try {
+                    const result = await postFormUrlEncoded('/Booking/CancelBooking', {
+                        id: bookingId,
+                        __RequestVerificationToken: token
+                    });
 
-                const response = await fetch('/Booking/CancelBooking?id=' + bookingId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'RequestVerificationToken': token
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message || 'İşlem başarısız.');
                     }
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    location.reload();
-                } else {
-                    alert(result.message || 'İşlem başarısız.');
+                }
+                catch (e) {
+                    console.error(e);
+                    alert('İptal işlemi sırasında beklenmeyen bir hata oluştu.');
                 }
             });
         });
+
+        // ================= TOGGLE FAVORITE =================
         document.querySelectorAll('.favorite-toggle').forEach(button => {
             button.addEventListener('click', async function () {
+
                 const icon = this.querySelector('i');
-                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-                const token = tokenInput ? tokenInput.value : '';
 
-                const body = new URLSearchParams({
-                    destinationId: this.dataset.destinationId,
-                    cityCountry: this.dataset.cityCountry,
-                    imageUrl: this.dataset.imageUrl,
-                    price: this.dataset.price
-                });
+                try {
+                    const result = await postFormUrlEncoded('/Booking/ToggleFavorite', {
+                        bookingId: this.dataset.bookingId,
+                        __RequestVerificationToken: token
+                    });
 
-                const response = await fetch('/Profile/ToggleFavorite', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'RequestVerificationToken': token
-                    },
-                    body
-                });
+                    if (!result.success) {
+                        alert(result.message || 'Favori işlemi başarısız.');
+                        return;
+                    }
 
-                const result = await response.json();
-                if (!result.success) {
-                    alert(result.message || 'Favori işlemi başarısız.');
-                    return;
+                    if (result.isFavorite) {
+                        icon.classList.remove('far', 'text-secondary');
+                        icon.classList.add('fas', 'text-danger');
+                    } else {
+                        icon.classList.remove('fas', 'text-danger');
+                        icon.classList.add('far', 'text-secondary');
+                    }
                 }
-
-                if (result.isFavorite) {
-                    icon.classList.remove('far', 'text-secondary');
-                    icon.classList.add('fas', 'text-danger');
-                } else {
-                    icon.classList.remove('fas', 'text-danger');
-                    icon.classList.add('far', 'text-secondary');
+                catch (e) {
+                    console.error(e);
+                    alert('Favori işlemi sırasında beklenmeyen bir hata oluştu.');
                 }
             });
         });
+
     </script>
 
     <form style="display:none;">

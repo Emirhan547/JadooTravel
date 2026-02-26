@@ -14,21 +14,21 @@ namespace JadooTravel.UI.Controllers
         private readonly IBookingService _bookingService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IDestinationService _destinationService;
-        private readonly IUserProfileService _userProfileService;
+
         private readonly ILogger<BookingController> _logger;
         private readonly IElasticAuditLogger _auditLogger;
         public BookingController(
              IDestinationService destinationService,
             IBookingService bookingService,
             UserManager<AppUser> userManager,
-            IUserProfileService userProfileService,
+         
             ILogger<BookingController> logger,
             IElasticAuditLogger auditLogger)
         {
             _bookingService = bookingService;
             _destinationService = destinationService;
             _userManager = userManager;
-            _userProfileService = userProfileService;
+
             _logger = logger;
             _auditLogger = auditLogger;
         }
@@ -83,11 +83,7 @@ namespace JadooTravel.UI.Controllers
             try
             {
                 var bookings = await _bookingService.GetUserBookingsAsync(user.Id);
-                var favorites = await _userProfileService.GetFavoritesAsync(user.Id);
-                var favoriteDestinationIds = favorites.Select(x => x.DestinationId).ToHashSet();
-
-                foreach (var booking in bookings)
-                    booking.IsFavorite = favoriteDestinationIds.Contains(booking.DestinationId);
+              
                 await _auditLogger.LogAsync("booking.list", "user", user.Id, "list", "booking", null, "success", new { count = bookings.Count });
                 return View(bookings);
             }

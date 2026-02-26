@@ -66,37 +66,8 @@ namespace JadooTravel.UI.Controllers
 
             return View(updateDto);
         }
-        [HttpPost]
-        public async Task<IActionResult> ToggleFavorite(string destinationId, string cityCountry, string imageUrl, decimal price)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Json(new { success = false, message = "Lütfen giriş yapınız" });
-
-            try
-            {
-                var existedBefore = (await _userProfileService.GetFavoritesAsync(user.Id)).Any(x => x.DestinationId == destinationId);
-
-                    
-
-                var result = await _userProfileService.ToggleFavoriteAsync(user.Id, destinationId, cityCountry, imageUrl, price);
-
-                if (!result)
-                {
-                    await _auditLogger.LogAsync("profile.favorite.toggle", "user", user.Id, "toggle_favorite", "destination", destinationId, "failed");
-                    return Json(new { success = false, message = "Favori işlemi başarısız" });
-                }
-                await _auditLogger.LogAsync("profile.favorite.toggle", "user", user.Id, "toggle_favorite", "destination", destinationId, "success", new { added = !existedBefore });
-                return Json(new { success = true, isFavorite = !existedBefore });
-                
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "ToggleFavorite failed. UserId: {UserId}, DestinationId: {DestinationId}", user.Id, destinationId);
-                await _auditLogger.LogAsync("profile.favorite.toggle", "user", user.Id, "toggle_favorite", "destination", destinationId, "error", new { ex.Message });
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+       
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(UpdateProfileDto model)
@@ -173,62 +144,6 @@ namespace JadooTravel.UI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> MyFavorites()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return RedirectToAction("Login", "Auth");
-
-            var favorites = await _userProfileService.GetFavoritesAsync(user.Id);
-            await _auditLogger.LogAsync("profile.favorite.list", "user", user.Id, "list", "favorite", null, "success", new { count = favorites.Count });
-            return View(favorites);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddFavorite(string destinationId, string cityCountry, string imageUrl, decimal price)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Json(new { success = false, message = "Lütfen giriş yapınız" });
-
-            try
-            {
-                var result = await _userProfileService.AddFavoriteAsync(user.Id, destinationId, cityCountry, imageUrl, price);
-                await _auditLogger.LogAsync("profile.favorite.add", "user", user.Id, "add_favorite", "destination", destinationId, result ? "success" : "failed");
-                if (result)
-                    return Json(new { success = true, message = "Favorilere eklendi" });
-                return Json(new { success = false, message = "Bu ürün zaten favorilerde" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "AddFavorite failed. UserId: {UserId}, DestinationId: {DestinationId}", user.Id, destinationId);
-                await _auditLogger.LogAsync("profile.favorite.add", "user", user.Id, "add_favorite", "destination", destinationId, "error", new { ex.Message });
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RemoveFavorite(string favoriteId)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Json(new { success = false, message = "Lütfen giriş yapınız" });
-
-            try
-            {
-                var result = await _userProfileService.RemoveFavoriteAsync(user.Id, favoriteId);
-                await _auditLogger.LogAsync("profile.favorite.remove", "user", user.Id, "remove_favorite", "favorite", favoriteId, result ? "success" : "failed");
-                if (result)
-                    return Json(new { success = true, message = "Favorilerden kaldırıldı" });
-                return Json(new { success = false, message = "Favori silinemedi" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "RemoveFavorite failed. UserId: {UserId}, FavoriteId: {FavoriteId}", user.Id, favoriteId);
-                await _auditLogger.LogAsync("profile.favorite.remove", "user", user.Id, "remove_favorite", "favorite", favoriteId, "error", new { ex.Message });
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+       
     }
 }

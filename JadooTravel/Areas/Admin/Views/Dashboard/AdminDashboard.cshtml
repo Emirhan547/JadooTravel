@@ -171,49 +171,8 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 mb-4">
-           
-            <div class="card panel-card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">En Çok Favorilenen Destinasyonlar</h6>
-                    <span class="metric-badge"><i class="fa fa-heart text-danger"></i> Canlı veri</span>
-                </div>
+   
 
-                <div class="card-body table-responsive">
-                    @if (Model.FavoriteDestinationStats != null && Model.FavoriteDestinationStats.Any())
-                    {
-                        <table class="table soft-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Destinasyon</th>
-                                    <th>Favori Sayısı</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (var i = 0; i < Model.FavoriteDestinationStats.Count; i++)
-                                {
-                                    var item = Model.FavoriteDestinationStats[i];
-                                    <tr>
-                                        <td>@(i + 1)</td>
-                                        <td>@item.CityCountry</td>
-                                        <td><span class="badge bg-danger">@item.FavoriteCount</span></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <div class="alert alert-light border mb-0">Henüz favori verisi bulunmuyor.</div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Charts Row -->
-  
     <div class="row">
         <div class="col-12 mb-4">
             <div class="card panel-card">
@@ -258,9 +217,9 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-       
+
         const capacities = @Html.Raw(Json.Serialize(Model.DestinationCapacities));
-     
+
         const dailyLabels = dailyStats.map(x =>
             new Date(x.date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })
         );
