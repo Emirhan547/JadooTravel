@@ -2,6 +2,7 @@
 using JadooTravel.Dto.Dtos.UserDtos;
 using JadooTravel.Entity.Entities;
 using JadooTravel.UI.Logging;
+using JadooTravel.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +16,19 @@ namespace JadooTravel.UI.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<ProfileController> _logger;
         private readonly IElasticAuditLogger _auditLogger;
-
+        private readonly IAwsS3Service _awsS3Service;
         public ProfileController(
             IUserProfileService userProfileService,
            UserManager<AppUser> userManager,
            ILogger<ProfileController> logger,
-           IElasticAuditLogger auditLogger)
+           IElasticAuditLogger auditLogger,
+           IAwsS3Service awsS3Service)
         {
             _userProfileService = userProfileService;
             _userManager = userManager;
             _logger = logger;
             _auditLogger = auditLogger;
+            _awsS3Service = awsS3Service;
         }
 
         [HttpGet]
@@ -70,13 +73,15 @@ namespace JadooTravel.UI.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(UpdateProfileDto model)
+        public async Task<IActionResult> Update(UpdateProfileDto model, IFormFile? imageFile)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
             try
             {
+                if (imageFile is not null)
+                    model.ProfileImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "profiles");
                 var result = await _userProfileService.UpdateProfileAsync(model);
                 if (result)
                 {

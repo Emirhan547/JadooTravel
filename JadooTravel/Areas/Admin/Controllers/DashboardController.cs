@@ -2,6 +2,7 @@
 using JadooTravel.Business.Abstract;
 using JadooTravel.Dto.Dtos.DashboardDtos;
 using JadooTravel.Dto.Dtos.DestinationDtos;
+using JadooTravel.Entity.Entities.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         private readonly IBookingService _bookingService;
         private readonly ITestimonialService _testimonialService;
         private readonly IMapper _mapper;
-      
+
 
         public DashboardController(
              ICategoryService categoryService,
@@ -25,14 +26,14 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
              ITestimonialService testimonialService,
 
              IMapper mapper)
-          
+
         {
             _categoryService = categoryService;
             _destinationService = destinationService;
             _bookingService = bookingService;
             _testimonialService = testimonialService;
             _mapper = mapper;
-         
+
         }
 
         [HttpGet]
@@ -45,24 +46,70 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
             var bookings = await _bookingService.GetAllAsync();
             var testimonials = await _testimonialService.GetAllAsync();
             var destinationDtos = _mapper.Map<List<ResultDestinationDto>>(destinations);
+            var filteredBookings = bookings
+                .Where(x => x.CreatedDate >= startDate.Value && x.CreatedDate <= endDate.Value.AddDays(1).AddTicks(-1))
+                .ToList();
 
+            var approvedBookings = filteredBookings.Count(x => x.Status == BookingStatus.Approved);
+            var pendingBookings = filteredBookings.Count(x => x.Status == BookingStatus.Pending);
+            var rejectedBookings = filteredBookings.Count(x => x.Status == BookingStatus.Rejected);
+            var cancelledBookings = filteredBookings.Count(x => x.Status == BookingStatus.Cancelled);
+
+            var totalRevenue = filteredBookings
+                .Where(x => x.Status == BookingStatus.Approved)
+                .Sum(x => x.TotalPrice);
+
+            var bookingDays = Math.Max(1, (endDate.Value.Date - startDate.Value.Date).Days + 1);
+
+            var dailyBookingData = Enumerable.Range(0, bookingDays)
+                .Select(offset => startDate.Value.Date.AddDays(offset))
+                .Select(day => new DailyBookingDataDto
+                {
+                    Date = day,
+                    BookingCount = filteredBookings.Count(x => x.CreatedDate.Date == day),
+                    Revenue = filteredBookings
+                        .Where(x => x.CreatedDate.Date == day && x.Status == BookingStatus.Approved)
+                        .Sum(x => x.TotalPrice)
+                })
+                .ToList();
             var statistics = new DashboardStatisticsDto
             {
                 TotalCategories = categories.Count,
+                ActiveCategories = categories.Count(x => x.Status),
                 TotalDestinations = destinations.Count,
                 TotalBookings = bookings.Count,
                 TotalTestimonials = testimonials.Count,
+                FilteredBookings = filteredBookings.Count,
+                ApprovedBookings = approvedBookings,
+                PendingBookings = pendingBookings,
+                RejectedBookings = rejectedBookings,
+                CancelledBookings = cancelledBookings,
+                TotalRevenue = totalRevenue,
+                AverageBookingAmount = filteredBookings.Count == 0 ? 0 : filteredBookings.Average(x => x.TotalPrice),
+                ApprovalRate = filteredBookings.Count == 0 ? 0 : (double)approvedBookings / filteredBookings.Count * 100,
 
                 StartDate = startDate.Value,
                 EndDate = endDate.Value,
-                DestinationCapacities = destinationDtos.Select(d => new DestinationCapacityDto
-                {
-                    CityCountry = d.CityCountry,
-                    Capacity = d.Capacity,
-                    Price = d.Price
-                }).ToList(),
+                DestinationCapacities = destinationDtos
+                    .OrderByDescending(x => x.Capacity)
+                    .Take(8)
+                    .Select(d => new DestinationCapacityDto
+                    {
+                        CityCountry = d.CityCountry,
+                        Capacity = d.Capacity,
+                        Price = d.Price
+                    }).ToList(),
                 LatestDestinations = destinationDtos.OrderByDescending(d => d.Id).Take(5).ToList(),
-          
+
+                DailyBookingData = dailyBookingData,
+                BookingStatusData = new List<BookingStatusDataDto>
+                {
+                    new() { Status = "Beklemede", Count = pendingBookings },
+                    new() { Status = "Onaylandı", Count = approvedBookings },
+                    new() { Status = "Reddedildi", Count = rejectedBookings },
+                    new() { Status = "İptal", Count = cancelledBookings }
+                }
+
             };
 
             return View(statistics);

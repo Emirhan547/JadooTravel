@@ -20,6 +20,8 @@ namespace JadooTravel.Dto.Dtos.BookingDtos
         public DateTime? UpdatedDate { get; set; }
         public string UserId { get; set; }
         public decimal TotalPrice { get; set; }
+        public string DestinationId { get; set; }
+        public string DestinationCityCountry { get; set; }
         public int PersonCount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
