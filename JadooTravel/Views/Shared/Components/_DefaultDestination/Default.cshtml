@@ -1,42 +1,124 @@
 ﻿@model List<ResultDestinationDto>
 
+<style>
+    /* === IMAGE STANDARDIZATION === */
+    .tour-image-wrapper {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 16px 16px 0 0;
+    }
+
+        .tour-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .4s ease;
+        }
+
+    .card:hover .tour-image-wrapper img {
+        transform: scale(1.05);
+    }
+
+    /* === CARD CONSISTENCY === */
+    .destination-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, .08);
+        transition: all .3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .destination-card:hover {
+            box-shadow: 0 18px 40px rgba(15, 23, 42, .15);
+            transform: translateY(-4px);
+        }
+
+        .destination-card .card-body {
+            flex-grow: 1;
+            padding: 20px 18px;
+        }
+
+        .destination-card h4 {
+            font-size: 1.1rem;
+        }
+
+    .price-text {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .daynight-text {
+        font-size: .9rem;
+        font-weight: 500;
+    }
+</style>
+
 <section class="pt-5" id="destination">
     <div class="container position-relative">
+
         <div class="position-absolute start-100 bottom-0 translate-middle-x d-none d-xl-block ms-xl-n4">
             <img src="/public/assets/img/dest/shape.svg" alt="destination" />
         </div>
-        <div class="mb-7 text-center">
-                <h5 class="text-secondary">Popüler Rotalar</h5>
-            <h3 class="fs-xl-10 fs-lg-8 fs-7 fw-bold font-cursive text-capitalize">
-                    En Çok Tercih Edilen Rotalar
+
+        <div class="mb-5 text-center">
+            <h5 class="text-secondary">Popüler Rotalar</h5>
+            <h3 class="fw-bold font-cursive text-capitalize">
+                En Çok Tercih Edilen Rotalar
             </h3>
         </div>
-        <div class="row">
+
+        <div class="row g-4">
             @foreach (var item in Model)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card overflow-hidden shadow">
-                        <img class="card-img-top" src="@item.ImageUrl" alt="@item.CityCountry" />
-                        <div class="card-body py-4 px-3">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between mb-3">
-                                <h4 class="text-secondary fw-medium">
-                                        <a class="link-900 text-decoration-none stretched-link" href="/Destination/Detail/@item.Id">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card destination-card">
+
+                        <!-- IMAGE -->
+                        <div class="tour-image-wrapper">
+                            <img src="@item.ImageUrl" alt="@item.CityCountry" />
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h4 class="text-secondary fw-medium mb-0">
+                                    <a class="link-900 text-decoration-none stretched-link"
+                                       href="/Destination/Detail/@item.Id">
                                         @item.CityCountry
                                     </a>
                                 </h4>
-                                <span class="fs-1 fw-medium">@item.Price ₺</span>
+
+                                <span class="price-text text-dark">
+                                    @item.Price.ToString("N2") ₺
+                                </span>
                             </div>
+
                             <div class="d-flex align-items-center">
-                                <img src="/public/assets/img/dest/navigation.svg" style="margin-right: 14px" width="20" alt="navigation" />
-                                <span class="fs-0 fw-medium">@item.DayNight</span>
+                                <img src="/public/assets/img/dest/navigation.svg"
+                                     style="margin-right: 10px"
+                                     width="18"
+                                     alt="navigation" />
+                                <span class="daynight-text text-muted">
+                                    @item.DayNight
+                                </span>
                             </div>
+
                         </div>
                     </div>
                 </div>
             }
-            </div>
-            <div class="text-center mt-4">
-                <a href="/Destination/Index" class="btn btn-primary">Tümünü Gör</a>
         </div>
+
+        <div class="text-center mt-5">
+            <a href="/Destination/Index" class="btn btn-primary px-4 py-2">
+                Tümünü Gör
+            </a>
+        </div>
+
     </div>
 </section>

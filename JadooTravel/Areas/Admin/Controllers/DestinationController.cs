@@ -61,7 +61,10 @@ namespace JadooTravel.UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateDestination(UpdateDestinationDto updateDestinationDto, IFormFile? imageFile)
         {
             if (imageFile is not null)
+            
                 updateDestinationDto.ImageUrl = await _awsS3Service.UploadImageAsync(imageFile, "destinations");
+            
+          
             await _destinationService.UpdateAsync(updateDestinationDto);
             await _auditLogger.LogAsync("admin.destination.update", "admin", User.Identity?.Name, "update", "destination", updateDestinationDto.Id, "success");
             return RedirectToAction("DestinationList");
