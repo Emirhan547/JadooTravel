@@ -1,5 +1,6 @@
 ﻿@using JadooTravel.Dto.Dtos.DashboardDtos
 @using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using System.Globalization
 @model DashboardStatisticsDto
 
 @inject IJsonHelper Json
@@ -8,7 +9,17 @@
     ViewData["Title"] = "AdminDashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
-    var statusRows = Model.BookingStatusData
+    var bookingStatusData = Model.BookingStatusData?.Any() == true
+         ? Model.BookingStatusData
+         : new List<BookingStatusDataDto>
+         {
+            new() { Status = "Beklemede", Count = Model.PendingBookings },
+            new() { Status = "Onaylandı", Count = Model.ApprovedBookings },
+            new() { Status = "Reddedildi", Count = Model.RejectedBookings },
+            new() { Status = "İptal", Count = Model.CancelledBookings }
+         };
+
+    var statusRows = bookingStatusData
         .Select(item => new
         {
             item.Status,
@@ -124,7 +135,10 @@
         background: #f8fafc;
     }
 
- 
+    .status-summary-badge {
+        color: #fff !important;
+        font-weight: 600;
+    }
             
                   
     canvas {
@@ -140,7 +154,7 @@
                
                 <small class="text-white-50 d-block mb-1">Jadoo Travel Yönetim Merkezi</small>
                 <h3 class="mb-1">Admin Dashboard</h3>
-                <p class="mb-2 text-white-50">Temaya uyumlu, okunabilir ve aksiyon odaklı kontrol paneli</p>
+                <p class="mb-2 text-white-50">Filtrelenmiş rezervasyon performansını tek ekranda izleyin</p>
                 <div class="d-flex flex-wrap gap-2">
                     <span class="hero-chip">Filtreli Rezervasyon: @Model.FilteredBookings</span>
                     <span class="hero-chip">Onay Oranı: %@Model.ApprovalRate.ToString("N1")</span>
@@ -228,7 +242,7 @@
             <div class="card panel-card h-100">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                     <h6 class="panel-title mb-0">Rezervasyon Performans Özeti</h6>
-                    <span class="badge bg-light text-dark">Son 30 gün yerine filtre tarihine göre</span>
+                    <span class="badge bg-light text-dark">Veriler seçilen tarih aralığına göre hesaplanır</span>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table kpi-table mb-0">
@@ -249,7 +263,7 @@
                                     <td class="text-center text-muted">%@row.Rate.ToString("N1")</td>
                                     <td>
                                         <div class="progress" style="height:7px;">
-                                            <div class="progress-bar bg-info" role="progressbar" style="width:@Math.Min(100, row.Rate)%"></div>
+                                            <div class="progress-bar bg-info" role="progressbar" style="width:@Math.Min(100, row.Rate).ToString("0.##", CultureInfo.InvariantCulture)%"></div>
                                         </div>
                                  
                                     </td>
@@ -276,10 +290,10 @@
                         <canvas id="statusDistributionChart"></canvas>
                     </div>
                     <div class="row text-center mt-2">
-                        <div class="col-6 mb-2"><span class="badge bg-success w-100">Onaylı: @Model.ApprovedBookings</span></div>
-                        <div class="col-6 mb-2"><span class="badge bg-warning text-dark w-100">Beklemede: @Model.PendingBookings</span></div>
-                        <div class="col-6 mb-2"><span class="badge bg-danger w-100">Reddedildi: @Model.RejectedBookings</span></div>
-                        <div class="col-6 mb-2"><span class="badge bg-secondary w-100">İptal: @Model.CancelledBookings</span></div>
+                        <div class="col-6 mb-2"><span class="badge bg-success status-summary-badge w-100">Onaylı: @Model.ApprovedBookings</span></div>
+                        <div class="col-6 mb-2"><span class="badge status-summary-badge w-100" style="background-color:#f59e0b;">Beklemede: @Model.PendingBookings</span></div>
+                        <div class="col-6 mb-2"><span class="badge bg-danger status-summary-badge w-100">Reddedildi: @Model.RejectedBookings</span></div>
+                        <div class="col-6 mb-2"><span class="badge bg-secondary status-summary-badge w-100">İptal: @Model.CancelledBookings</span></div>
                     </div>
                 </div>
             </div>
