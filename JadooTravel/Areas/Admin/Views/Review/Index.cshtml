@@ -4,17 +4,143 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="row mb-3">
-    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Toplam</h6><h4>@Model.Stats.TotalReviews</h4></div></div></div>
-    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Onaylı</h6><h4 class="text-success">@Model.Stats.ApprovedReviews</h4></div></div></div>
-    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Bekleyen</h6><h4 class="text-warning">@Model.Stats.PendingReviews</h4></div></div></div>
-    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Ortalama Puan</h6><h4>@Model.Stats.AverageRating</h4></div></div></div>
+<style>
+    /* =======================
+       MODERN ÜST KARTLAR
+    ========================== */
+
+    .modern-stat-card {
+        border: 0;
+        border-radius: 16px;
+        padding: 22px;
+        color: #fff;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        transition: .2s ease;
+    }
+
+        .modern-stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+    .stat-title {
+        font-size: 13px;
+        opacity: .85;
+        margin-bottom: 6px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg,#3b82f6,#1d4ed8);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg,#22c55e,#15803d);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg,#f59e0b,#d97706);
+        color: #111;
+    }
+
+    .bg-gradient-dark {
+        background: linear-gradient(135deg,#64748b,#334155);
+    }
+
+
+    /* =======================
+       TABLO GENEL FIX
+    ========================== */
+
+    .table td {
+        vertical-align: middle !important;
+    }
+
+
+        /* =======================
+       DURUM KESİN ÇÖZÜM
+    ========================== */
+
+        /* Durum hücresini izole et */
+        .table td:nth-child(5) {
+            background: transparent !important;
+        }
+
+            /* Badge override */
+            .table td:nth-child(5) .badge {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 14px !important;
+                min-width: 90px;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                border-radius: 30px !important;
+                line-height: 1.2 !important;
+                white-space: nowrap !important;
+                position: relative;
+                z-index: 5;
+            }
+
+            /* Onaylı */
+            .table td:nth-child(5) .bg-success {
+                background-color: #16a34a !important;
+                color: #fff !important;
+            }
+
+            /* Bekleyen */
+            .table td:nth-child(5) .bg-warning {
+                background-color: #facc15 !important;
+                color: #000 !important;
+            }
+
+</style>
+
+
+<!-- ÜST KARTLAR -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="modern-stat-card bg-gradient-primary">
+            <div class="stat-title">Toplam</div>
+            <h4 class="stat-value">@Model.Stats.TotalReviews</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="modern-stat-card bg-gradient-success">
+            <div class="stat-title">Onaylı</div>
+            <h4 class="stat-value">@Model.Stats.ApprovedReviews</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="modern-stat-card bg-gradient-warning">
+            <div class="stat-title">Bekleyen</div>
+            <h4 class="stat-value">@Model.Stats.PendingReviews</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="modern-stat-card bg-gradient-dark">
+            <div class="stat-title">Ortalama Puan</div>
+            <h4 class="stat-value">@Model.Stats.AverageRating</h4>
+        </div>
+    </div>
 </div>
 
+
+<!-- TABLO -->
 <div class="card card-outline card-primary">
     <div class="card-header">
-        <h3 class="card-title"><i class="fa fa-comments mr-1"></i> Tüm Yorumlar</h3>
+        <h3 class="card-title">
+            <i class="fa fa-comments mr-1"></i> Tüm Yorumlar
+        </h3>
     </div>
+
     <div class="card-body p-0">
         <table class="table table-bordered table-hover mb-0">
             <thead>
@@ -45,35 +171,47 @@
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">Bekliyor</span>
+                                    <span class="badge bg-warning">Bekliyor</span>
                                 }
                             </td>
                             <td>@review.CreatedDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                             <td>
                                 @if (!review.IsApproved)
                                 {
-                                    <button class="btn btn-success btn-sm approve-btn" data-review-id="@review.Id">Onayla</button>
+                                    <button class="btn btn-success btn-sm approve-btn"
+                                            data-review-id="@review.Id">
+                                        Onayla
+                                    </button>
                                 }
-                                <button class="btn btn-danger btn-sm delete-btn" data-review-id="@review.Id">Sil</button>
+                                <button class="btn btn-danger btn-sm delete-btn"
+                                        data-review-id="@review.Id">
+                                    Sil
+                                </button>
                             </td>
                         </tr>
                     }
                 }
                 else
                 {
-                    <tr><td colspan="7" class="text-center p-3">Yorum bulunamadı.</td></tr>
+                    <tr>
+                        <td colspan="7" class="text-center p-3">
+                            Yorum bulunamadı.
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
 
+
 <script>
     document.querySelectorAll('.approve-btn').forEach(btn => {
         btn.addEventListener('click', async function () {
             const data = new FormData();
             data.append('reviewId', this.dataset.reviewId);
-            const response = await fetch('/Admin/Review/ApproveReview', { method: 'POST', body: data });
+            const response = await fetch('/Admin/Review/ApproveReview',
+                { method: 'POST', body: data });
             const result = await response.json();
             alert(result.message);
             if (result.success) location.reload();
@@ -85,7 +223,8 @@
             if (!confirm('Yorum silinsin mi?')) return;
             const data = new FormData();
             data.append('reviewId', this.dataset.reviewId);
-            const response = await fetch('/Admin/Review/DeleteReview', { method: 'POST', body: data });
+            const response = await fetch('/Admin/Review/DeleteReview',
+                { method: 'POST', body: data });
             const result = await response.json();
             alert(result.message);
             if (result.success) location.reload();
